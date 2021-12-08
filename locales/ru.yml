@@ -1,0 +1,7 @@
+name: 🇷🇺 Русский
+start:
+  text: |
+    Здравствуйте
+  chooseLang: Выберите язык
+languageSet: s
+notSubscribed: s
