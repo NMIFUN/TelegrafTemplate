@@ -11,10 +11,11 @@ let User = mongoose.Schema({
 	username: String,
 	state: String,
 	ban: Boolean,
-	regDate: Date,
 	lang: String,
 	langCode: String,
-	active: Boolean
+	alive: Boolean,
+  from: String,
+  lastMessage: Date
 }, {
   timestamps: true
 })

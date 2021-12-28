@@ -1,12 +1,6 @@
 require("dotenv").config({ path: `${__dirname}/.env` })
 
-const mongoose = require('mongoose')
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true
-})
+const mongoose = require("./models")
 
 const { Telegraf } = require('telegraf')
 const allowedUpdates = ['message','inline_query','callback_query','my_chat_member']
@@ -63,10 +57,9 @@ const subscription = require('./middlewares/subscription')
 bot.on('message', subscription)
 
 const messageRouter = require('./routers/message')
-const callbackQueryRouter = require('./routers/callbackQuery')
-
 bot.on('message', messageRouter)
 
+const callbackQueryRouter = require('./routers/callbackQuery')
 bot.on('callback_query', callbackQueryRouter)
 
 const myChatMmber = require('./actions/myChatMmber')
@@ -90,5 +83,20 @@ bot.launch(
   }
 )
 
-bot.telegram.getWebhookInfo().then( (webhookInfo) => { console.log(`✅ Bot is up and running\n${JSON.stringify(webhookInfo, null, ' ')}`) })
-console.log(`Bot is running.`)
+  bot.telegram.getWebhookInfo().then( (webhookInfo) => { console.log(`✅ Bot is up and running\n${JSON.stringify(webhookInfo, null, ' ')}`) })
+  console.log(`Bot is running.`)
+
+const schedule = require('node-schedule')
+const Mail = require('./models/mail')
+const lauchWorker = require('./actions/admin/mail/lauchWorker')
+
+function r(){}
+(async () => {
+  const result = await Mail.findOne({ $or : [{ status: 'notStarted'}, { status: 'doing'}]})
+  if(result) lauchWorker(result._id)
+})()
+
+const job = schedule.scheduleJob('0 * * * * *', async () => {
+  const result = await Mail.findOne({ status: 'notStarted', startDate: { $exists: true, $lte: new Date() } })
+  if(result) lauchWorker(result._id)
+})

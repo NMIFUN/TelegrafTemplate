@@ -6,7 +6,8 @@ module.exports = async (ctx) => {
   if(ctx.updateType === 'callback_query') {
     await ctx.answerCbQuery()
     ctx.user.state = `admin_addAdmin`
-    return ctx.editMessageText(`Введите <b>id</b> администратора\n\nТекущий список: ${config.admins.join(', ')}`, { 
+    return ctx.editMessageText(`Для добавления/удаления администратора введите его id.
+\nТекущий список администраторов: ${config.admins.join(', ')}`, { 
       ...admin.backKeyboard,
       parse_mode: "HTML"
     })
@@ -15,10 +16,14 @@ module.exports = async (ctx) => {
 
     const list = ctx.message.text.split(',')
     for (let i of list) {
-      i = i.trim()
-      if(!config.admins.includes(i)) config.admins.push(Number(i))
+      i = Number(i.trim())
+      
+      const find = config.admins.indexOf(i)
+      
+      if(find === -1) config.admins.push(i)
+      else config.admins.splice(find, 1)
     }
-    await fs.writeFile('../../config.json', JSON.stringify(config))
+    await fs.writeFile('config.json', JSON.stringify(config))
 
     return ctx.replyWithHTML(`Список администраторов обновлен\n\nТекущий список: ${config.admins.join(', ')}`, admin.backKeyboard)
   }

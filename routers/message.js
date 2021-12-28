@@ -1,9 +1,12 @@
 const { Router } = require('telegraf')
+const config = require('../config')
+const View = require('../models/view')
+const Mail = require('../models/mail')
 
 const router = new Router(async (ctx) => {
   if(ctx.chat.type !== 'private') return
 
-  const route = (ctx.message?.text.startsWith('/')) ? 'command' :
+  const route = (ctx.message?.text?.startsWith('/')) ? 'command' :
   (ctx.user.state) ? 'state' : 
   'else'
 
@@ -11,8 +14,9 @@ const router = new Router(async (ctx) => {
 })
 
 const adminRouter = new Router(async (ctx) => {
-  const cmd = ctx.user.state.split('_')
+  if (!config.admins.includes(ctx.from.id)) return
 
+  const cmd = ctx.user.state.split('_')
   return { route: cmd[1], state: cmd.splice(2, cmd.length) }
 })
 
@@ -44,6 +48,25 @@ adminRouter.on('addAdmin', addAdmin)
 
 const addSubscription = require('../actions/admin/addSubscription')
 adminRouter.on('addSubscription', addSubscription)
+
+const adminMailRouter = new Router(async (ctx) => {
+  const cmd = ctx.user.state.split('_')
+
+  ctx.Mail = Mail
+  
+  ctx.state = cmd.slice(3, cmd.length)
+  return { route: cmd[2] }
+})
+
+adminMailRouter.on('add', require('../actions/admin/mail/add'))
+
+adminMailRouter.on('keyboard', require('../actions/admin/mail/keyboard'))
+adminMailRouter.on('lang', require('../actions/admin/mail/lang'))
+adminMailRouter.on('quantity', require('../actions/admin/mail/quantity'))
+adminMailRouter.on('editPost', require('../actions/admin/mail/editPost'))
+adminMailRouter.on('startDate', require('../actions/admin/mail/startDate'))
+
+adminRouter.on('mail', adminMailRouter)
 
 stateRouter.on('admin', adminRouter)
 

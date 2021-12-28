@@ -2,3 +2,10 @@ name: 🇬🇧 English
 start:
   text: |
     Hello
+languageSet: Language set
+subscribe:
+  text: You are not subscribed to the channel/group <a href='${channel.link}'>${channel.title}</a>
+  key:
+    subscribe: Subscribe
+    check: Check
+  success: You have subscribed to channels/groups and now you can use the bot.

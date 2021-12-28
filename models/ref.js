@@ -4,7 +4,7 @@ let Ref = mongoose.Schema({
 	name: String,
 	first: Date,
 	last: Date,
-	all: Number,
+	count: Number,
 	uniqueCount: Number,
 	newCount: Number,
 	users: Array

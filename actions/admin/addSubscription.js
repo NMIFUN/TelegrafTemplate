@@ -6,29 +6,42 @@ module.exports = async (ctx) => {
   if(ctx.updateType === 'callback_query') {
     await ctx.answerCbQuery()
     ctx.user.state = `admin_addSubscription`
-    return ctx.editMessageText(`Введите канал/чат в формате (id/@username ссылка) на подписку\n\nТекущий список: ${config.subsChannels.map(e => e.title).join(", ")}`, { 
+    return ctx.editMessageText(`Для добавления канала/чата на обязательную подписку введите id/@username через пробел\nПример: <code>-1001488198124 t.me/+WLQZ7FtUjj65e93L</code>\n
+Для удаления канала/чата из обязательной подписки введите его id\n
+Текущий список каналов/чатов на обязательную подписку: ${config.subsChannels.map(e => `<a href='${e.link}'>${e.title}</a> (<code>${e.id}</code>)`).join(", ")}`, { 
       ...admin.backKeyboard,
-      parse_mode: "HTML"
+      parse_mode: "HTML",
+      disable_web_page_preview: true
     })
   }else{
     const list = ctx.message.text.split(' ')
 
-    try {
-      var getChat = await ctx.telegram.getChat(list[0])
-    } catch (e) {
-      return ctx.replyWithHTML(`Неверный канал/чат`)
+    let find = config.subsChannels.findIndex(o => o.id === list[0])
+    if(find !== -1) config.subsChannels.splice(find, 1)
+    else {
+      try {
+        var getChat = await ctx.telegram.getChat(list[0])
+      } catch (e) {
+        return ctx.replyWithHTML(`Неверный канал/чат`)
+      }
+      
+      ctx.user.state = null
+  
+      find = config.subsChannels.findIndex(o => o.id === getChat.id)
+      if(find === -1) config.subsChannels.push({
+        link: list[1],
+        title: getChat.title,
+        id: getChat.id
+      })
+      else config.subsChannels.splice(find, 1)
     }
     
-    ctx.user.state = null
+    await fs.writeFile('config.json', JSON.stringify(config))
 
-    config.subsChannels.push({
-      link: list[1],
-      title: getChat.title,
-      id: getChat.id
+    return ctx.replyWithHTML(`Список каналов/чатов на обязательную подписку обновлен\n
+Текущий список: ${config.subsChannels.map(e => `<a href='${e.link}'>${e.title}</a> (<code>${e.id}</code>)`).join(", ")}`, { 
+      ...admin.backKeyboard,
+      disable_web_page_preview: true
     })
-
-    await fs.writeFile('../../config.json', JSON.stringify(config))
-
-    return ctx.replyWithHTML(`Список каналов/чатов на подписку обновлен\n\nТекущий список: ${config.subsChannels.map(e => e.title).join(", ")}`, admin.backKeyboard)
   }
 }
