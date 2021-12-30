@@ -62,6 +62,9 @@ bot.on('message', messageRouter)
 const callbackQueryRouter = require('./routers/callbackQuery')
 bot.on('callback_query', callbackQueryRouter)
 
+const inlineQueryRouter = require('./routers/inlineQuery')
+bot.on('inline_query', inlineQueryRouter)
+
 const myChatMmber = require('./actions/myChatMmber')
 bot.on('my_chat_member', myChatMmber)
 

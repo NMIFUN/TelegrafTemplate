@@ -35,12 +35,17 @@ EN:
 
   ctx.user.state = null
 
-  if(ctx.updateType === 'callback_query') {
+  if(ctx.updateType === 'callback_query'){
     await ctx.answerCbQuery()
-    return ctx.editMessageText(text, { 
+
+    if(ctx.callbackQuery.message.text) return ctx.editMessageText(text, { 
       ...keyboard,
       parse_mode: "HTML"
-    }).catch(() => {})
+    })
+    else {
+      await ctx.deleteMessage()
+      return ctx.replyWithHTML(text, keyboard)
+    }
   } else {
     return ctx.replyWithHTML(text, keyboard)
   }

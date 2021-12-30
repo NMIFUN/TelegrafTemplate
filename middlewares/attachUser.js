@@ -1,7 +1,7 @@
 const User = require('../models/user')
 
 module.exports = async (ctx, next) => {
-  if(ctx.chat.type !== 'private') return next()
+  if(ctx?.chat?.type !== 'private') return next()
 
   let user = await User.findOne({ id: ctx.from.id})
   if(!user) {

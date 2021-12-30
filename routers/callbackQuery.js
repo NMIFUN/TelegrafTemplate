@@ -15,6 +15,8 @@ router.on('translateBot', translateBot)
 const subscription = require('../middlewares/subscription')
 router.on('subscription', subscription)
 
+router.on('inlineUpdateMail', require('../actions/admin/mail/inlineUpdate'))
+
 const adminRouter = new Router(async (ctx) => {
   if (!config.admins.includes(ctx.from.id)) return
 

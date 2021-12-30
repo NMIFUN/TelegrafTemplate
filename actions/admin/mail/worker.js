@@ -13,13 +13,13 @@ function r(){}
   let mail = await Mail.findById(workerData)
   
   const mailConfig = {
-    //alive: true
+    alive: true
   }
   if(mail.lang !== null) mailConfig.lang = mail.lang
 
   const users = await User.find(mailConfig, { id: 1 }).skip(mail.success + mail.unsuccess).limit(mail.quantity)
   mail.status = 'doing'
-  mail.startDate = Date.now()
+  if(mail.success + mail.unsuccess === 0) mail.startDate = Date.now()
   await mail.save()
 
   for (const user of users) {

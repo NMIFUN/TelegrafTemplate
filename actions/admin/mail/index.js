@@ -75,7 +75,7 @@ module.exports = async (ctx) => {
           Markup.callbackButton(`📫 Неуспешно ${result.unsuccess}`, `admin_mail_none`),
         ],
         [ 
-          Markup.callbackButton(`🕰 Длительность ${parseInt(((result.endDate ? result.endDate : Date.now()) - result.startDate) / (1000 * 60)).toFixed(2)} мин.`, `admin_mail_none`),
+          Markup.callbackButton(`🕰 Длительность ${parseInt(((result.endDate ? result.endDate : Date.now()) - result.startDate) / (1000 * 60)).toFixed(1)} мин.`, `admin_mail_none`),
         ]
       ]
 
@@ -92,6 +92,7 @@ module.exports = async (ctx) => {
 
     extraKeyboard = extraKeyboard.concat([
       [
+        Markup.switchToChatButton(`✈️ Поделиться`, `mail_${result._id}`),
         Markup.callbackButton(`🗑 Удалить`, `admin_mail_delete_${result._id}`),
       ]
       ,[

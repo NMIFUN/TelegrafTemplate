@@ -1,4 +1,5 @@
 const Markup = require('telegraf/markup')
+const lauchWorker = require('../mail/lauchWorker')
 
 module.exports = async (ctx) => {
   await ctx.answerCbQuery()
@@ -7,7 +8,10 @@ module.exports = async (ctx) => {
   const updateObject = {}
   if(ctx.state[1] === 'stop') updateObject.status = 'stopped'
   else if(ctx.state[1] === 'pause') updateObject.status = 'paused'
-  else if(ctx.state[1] === 'continue') updateObject.status = 'doing'
+  else if(ctx.state[1] === 'continue') {
+    updateObject.status = 'doing'
+    lauchWorker(ctx.state[0])
+  }
 
   const mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], updateObject)
 
