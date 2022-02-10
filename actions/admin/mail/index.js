@@ -31,7 +31,7 @@ module.exports = async (ctx) => {
     parse_mode: "HTML"
   })
   else {
-    await ctx.deleteMessage()
+    await ctx.deleteMessage().catch(()=>{})
     const result = await ctx.Mail.findOne().skip(a)
     let extraKeyboard = [
       [ 

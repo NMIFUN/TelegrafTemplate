@@ -37,7 +37,7 @@ module.exports = async (ctx) => {
         const splitWand = i.split('|')
         for (const y of splitWand) {
           const splitDash = y.split('-')
-          tempArr.push({ text: splitDash[0].trim(), url: splitDash[1].trim() })
+          tempArr.push({ text: splitDash[0].trim(), url: splitDash.slice(1).join('').trim() })
         }
         keyboard.push(tempArr)
       }

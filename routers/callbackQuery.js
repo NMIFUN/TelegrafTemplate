@@ -9,11 +9,9 @@ const router = new Router(async (ctx) => {
   return { route: split[0], state: split.splice(1, split.length) }
 })
 
-const translateBot = require('../actions/translateBot')
-router.on('translateBot', translateBot)
+router.on('translateBot', require('../actions/translateBot'))
 
-const subscription = require('../middlewares/subscription')
-router.on('subscription', subscription)
+router.on('subscription', require('../middlewares/subscription'))
 
 router.on('inlineUpdateMail', require('../actions/admin/mail/inlineUpdate'))
 
@@ -26,17 +24,13 @@ const adminRouter = new Router(async (ctx) => {
   return { route: split[1] }
 })
 
-const addAdmin = require('../actions/admin/addAdmin')
-adminRouter.on('addAdmin', addAdmin)
+adminRouter.on('addAdmin', require('../actions/admin/addAdmin'))
 
-const addSubscription = require('../actions/admin/addSubscription')
-adminRouter.on('addSubscription', addSubscription)
+adminRouter.on('addSubscription', require('../actions/admin/addSubscription'))
 
-const listUsers = require('../actions/admin/listUsers')
-adminRouter.on('listUsers', listUsers)
+adminRouter.on('listUsers', require('../actions/admin/listUsers'))
 
-const sysRef = require('../actions/admin/sysRef')
-adminRouter.on('sysRef', sysRef)
+adminRouter.on('sysRef', require('../actions/admin/sysRef'))
 
 const adminViewRouter = new Router(async (ctx) => {
   const split =  ctx.callbackQuery.data.split('_')
@@ -81,8 +75,7 @@ adminMailRouter.on('none', ctx => ctx.answerCbQuery())
 
 adminRouter.on('mail', adminMailRouter)
 
-const adminBack = require('../actions/admin')
-adminRouter.on('back', adminBack)
+adminRouter.on('back', require('../actions/admin'))
 
 router.on('admin', adminRouter)
 

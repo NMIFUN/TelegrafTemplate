@@ -6,8 +6,7 @@
     "mongoose": "^6.1.0",
     "node-schedule": "^2.1.0",
     "telegraf": "github:NMIFUN/telegraf",
-    "telegraf-i18n": "^6.6.0",
-    "telegraf-ratelimit": "^2.0.0"
+    "telegraf-i18n": "^6.6.0"
   },
   "name": "telegraf-bot-template",
   "version": "1.0.0",

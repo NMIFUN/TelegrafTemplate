@@ -42,7 +42,7 @@ module.exports = async ctx => {
   const result = `${statuses[mail.status]}
 
 ${(mail.status === 'notStarted') ? (mail.startDate) ? text.startDate = `Запланирована на ${new Date(mail.startDate).toLocaleString('ru', dateConfig)}` : `Не запланирована`
-: `🏃 Прогресс выполнения: ${parts[Math.round(procent*10)]} - ${mail.success+mail.unsuccess}/${countUsers} - ${Math.floor(procent * 100)}%
+: `${(mail.status !== 'completed') ? `🏃 Прогресс выполнения: ${parts[Math.round(procent*10)]} - ${mail.success+mail.unsuccess}/${countUsers} - ${Math.floor(procent * 100)}%` : ''}
 
 📊 Статистика:
 📬 Успешно: ${mail.success}

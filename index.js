@@ -29,8 +29,7 @@ const limitConfig = {
 }
 bot.use(rateLimit(limitConfig))
 
-const attachUser = require('./middlewares/attachUser')
-bot.use(attachUser)
+bot.use(require('./middlewares/attachUser'))
 
 bot.use(async (ctx, next) => {
   if(ctx.message && ctx.message.text && ctx.chat && ctx.chat.type == 'private') console.log(`${(ctx.from.username && `@${ctx.from.username}`) || ctx.from.id} ввел "${ctx.message.text}"`)
@@ -47,26 +46,19 @@ bot.use(async (ctx, next) => {
   console.log(`${ctx.updateType} ${ctx.updateSubTypes} from ${ctx.from && ctx.from.id || "UNDEFINED"} ${Date.now()-startDate}ms`)
 })
 
-const sysRefs = require('./middlewares/sysRefs')
-bot.on('text', sysRefs)
+bot.on('text', require('./middlewares/sysRefs'))
 
-const translateBot = require('./actions/translateBot')
-bot.on('text', translateBot)
+bot.on('text', require('./actions/translateBot'))
 
-const subscription = require('./middlewares/subscription')
-bot.on('message', subscription)
+bot.on('message', require('./middlewares/subscription'))
 
-const messageRouter = require('./routers/message')
-bot.on('message', messageRouter)
+bot.on('message', require('./routers/message'))
 
-const callbackQueryRouter = require('./routers/callbackQuery')
-bot.on('callback_query', callbackQueryRouter)
+bot.on('callback_query', require('./routers/callbackQuery'))
 
-const inlineQueryRouter = require('./routers/inlineQuery')
-bot.on('inline_query', inlineQueryRouter)
+bot.on('inline_query', require('./routers/inlineQuery'))
 
-const myChatMmber = require('./actions/myChatMmber')
-bot.on('my_chat_member', myChatMmber)
+bot.on('my_chat_member', require('./actions/myChatMmber'))
 
 bot.launch(
   (process.env.USE_WEBHOOK==='true') ? {
@@ -86,8 +78,8 @@ bot.launch(
   }
 )
 
-  bot.telegram.getWebhookInfo().then( (webhookInfo) => { console.log(`✅ Bot is up and running\n${JSON.stringify(webhookInfo, null, ' ')}`) })
-  console.log(`Bot is running.`)
+bot.telegram.getWebhookInfo().then( (webhookInfo) => { console.log(`✅ Bot is up and running\n${JSON.stringify(webhookInfo, null, ' ')}`) })
+console.log(`Bot is running.`)
 
 const schedule = require('node-schedule')
 const Mail = require('./models/mail')

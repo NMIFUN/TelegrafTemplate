@@ -26,14 +26,11 @@ const commandRouter = new Router(async (ctx) => {
   return { route: cmd[0], state: cmd.splice(1, cmd.length) }
 })
 
-const admin = require('../actions/admin')
-commandRouter.on('admin', admin)
+commandRouter.on('admin', require('../actions/admin'))
 
-const start = require('../actions/start')
-commandRouter.on('start', start)
+commandRouter.on('start', require('../actions/start'))
 
-const translateBot = require('../actions/translateBot')
-commandRouter.on('lang', translateBot)
+commandRouter.on('lang', require('../actions/translateBot'))
 
 router.on('command', commandRouter)
 
@@ -43,11 +40,9 @@ const stateRouter = new Router(async (ctx) => {
   return { route: cmd[0], state: cmd.splice(1, cmd.length) }
 })
 
-const addAdmin = require('../actions/admin/addAdmin')
-adminRouter.on('addAdmin', addAdmin)
+adminRouter.on('addAdmin', require('../actions/admin/addAdmin'))
 
-const addSubscription = require('../actions/admin/addSubscription')
-adminRouter.on('addSubscription', addSubscription)
+adminRouter.on('addSubscription', require('../actions/admin/addSubscription'))
 
 const adminMailRouter = new Router(async (ctx) => {
   const cmd = ctx.user.state.split('_')
@@ -73,4 +68,5 @@ stateRouter.on('admin', adminRouter)
 router.on('state', stateRouter)
 
 router.on('else', (ctx) => ctx.reply('🌯'))
+
 module.exports = router

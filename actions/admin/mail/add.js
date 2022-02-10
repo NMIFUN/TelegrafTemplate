@@ -16,7 +16,7 @@ module.exports = async (ctx) => {
     const mail = ctx.Mail({
       uid: ctx.from.id,
       message: ctx.message,
-      keyboard: ctx.message.reply_markup,
+      keyboard: ctx.message?.reply_markup?.inline_keyboard,
       status: 'notStarted',
     })
     await mail.save()
