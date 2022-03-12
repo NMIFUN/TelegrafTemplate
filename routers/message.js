@@ -15,15 +15,17 @@ const router = new Router(async (ctx) => {
 
 const adminRouter = new Router(async (ctx) => {
   if (!config.admins.includes(ctx.from.id)) return
-
   const cmd = ctx.user.state.split('_')
-  return { route: cmd[1], state: cmd.splice(2, cmd.length) }
+
+  ctx.state = cmd.slice(2, cmd.length)
+  return { route: cmd[1] }
 })
 
 const commandRouter = new Router(async (ctx) => {
   const cmd = ctx.message.text.replace('/', '').split(' ')
 
-  return { route: cmd[0], state: cmd.splice(1, cmd.length) }
+  ctx.state = cmd.slice(1, cmd.length)
+  return { route: cmd[0] }
 })
 
 commandRouter.on('admin', require('../actions/admin'))
@@ -37,7 +39,8 @@ router.on('command', commandRouter)
 const stateRouter = new Router(async (ctx) => {
   const cmd = ctx.user.state.split('_')
 
-  return { route: cmd[0], state: cmd.splice(1, cmd.length) }
+  ctx.state = cmd.slice(1, cmd.length)
+  return { route: cmd[0] }
 })
 
 adminRouter.on('addAdmin', require('../actions/admin/addAdmin'))

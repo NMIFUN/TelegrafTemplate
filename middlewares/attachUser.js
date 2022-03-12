@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const convertChars = require('../helpers/convertChars')
 
 module.exports = async (ctx, next) => {
   if(ctx?.chat?.type !== 'private') return next()
@@ -7,7 +8,7 @@ module.exports = async (ctx, next) => {
   if(!user) {
     user = new User({
       id: ctx.from.id,
-      name: ctx.from.first_name,
+      name: convertChars(ctx.from.first_name),
       username: ctx.from.username,
       langCode: ctx.from.language_code,
       alive: true,

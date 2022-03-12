@@ -6,7 +6,8 @@ const Mail = require('../models/mail')
 const router = new Router(async (ctx) => {
   const split =  ctx.callbackQuery.data.split('_')
 
-  return { route: split[0], state: split.splice(1, split.length) }
+  ctx.state = split.slice(1, split.length)
+  return { route: split[0] }
 })
 
 router.on('translateBot', require('../actions/translateBot'))
