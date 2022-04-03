@@ -30,6 +30,7 @@ EN:
     Markup.callbackButton(`Список пользователей`, `admin_listUsers`),
     Markup.callbackButton(`Админы`, `admin_addAdmin`),
     Markup.callbackButton(`Обязательная подписка`, `admin_addSubscription`),
+    Markup.callbackButton(`(Раз)бан пользователя`, `admin_ban`),
     Markup.callbackButton(`Обновить`, `admin_back`),
   ], { columns: 2 }).extra()
 

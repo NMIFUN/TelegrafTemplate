@@ -30,7 +30,7 @@ const limitConfig = {
 bot.use(rateLimit(limitConfig))
 
 bot.use(require('./middlewares/attachUser'))
-const convertChars = require('./convertChars/conver')
+const convertChars = require('./helpers/convertChars')
 
 bot.use(async (ctx, next) => {
   if(ctx.message && ctx.message.text && ctx.chat && ctx.chat.type == 'private') console.log(`${(ctx.from.username && `@${ctx.from.username}`) || ctx.from.id} ввел "${ctx.message.text}"`)
@@ -38,11 +38,15 @@ bot.use(async (ctx, next) => {
 
   const startDate = Date.now()
   if(ctx.user && ctx.from) {
+    if(ctx.user.ban) return
+
     ctx.user.username = ctx.from.username
     ctx.user.lastMessage = Date.now()
     ctx.user.name = convertChars(ctx.from.first_name)
+    ctx.user.alive = true
     ctx.i18n.locale(ctx.user.lang)
   }
+
   await next()
   console.log(`${ctx.updateType} ${ctx.updateSubTypes} from ${ctx.from && ctx.from.id || "UNDEFINED"} ${Date.now()-startDate}ms`)
 })

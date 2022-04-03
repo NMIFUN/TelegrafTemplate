@@ -44,8 +44,8 @@ const stateRouter = new Router(async (ctx) => {
 })
 
 adminRouter.on('addAdmin', require('../actions/admin/addAdmin'))
-
 adminRouter.on('addSubscription', require('../actions/admin/addSubscription'))
+adminRouter.on('ban', require('../actions/admin/ban'))
 
 const adminMailRouter = new Router(async (ctx) => {
   const cmd = ctx.user.state.split('_')

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 let Ref = mongoose.Schema({
-	name: String,
+	name: { type: String, index: true, unique: true },
 	first: Date,
 	last: Date,
 	count: Number,
