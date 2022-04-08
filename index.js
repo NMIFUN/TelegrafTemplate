@@ -92,7 +92,7 @@ const lauchWorker = require('./actions/admin/mail/lauchWorker')
 
 function r(){}
 (async () => {
-  const result = await Mail.findOne({ $or : [{ status: 'notStarted'}, { status: 'doing'}]})
+  const result = await Mail.findOne({ status: 'doing'})
   if(result) lauchWorker(result._id)
 })()
 
