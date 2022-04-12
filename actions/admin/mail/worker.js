@@ -17,18 +17,22 @@ function r(){}
   }
   if(mail.lang !== null) mailConfig.lang = mail.lang
 
-  const users = await User.find(mailConfig, { id: 1 }).skip(mail.success + mail.unsuccess).limit(mail.quantity)
+  const users = await User.find(mailConfig, { id: 1 }).skip(mail.success + mail.unsuccess).limit(mail.quantity - mail.success + mail.unsuccess)
   mail.status = 'doing'
   if(mail.success + mail.unsuccess === 0) mail.startDate = Date.now()
   await mail.save()
 
   for (const user of users) {
-    await bot.telegram.sendCopy(user.id, mail.message, { reply_markup: {
-			inline_keyboard: mail.keyboard
-		}, disable_web_page_preview: !mail.preview }).then((r) => { mail.success++ }).catch((e) => {
+    await bot.telegram.sendCopy(user.id, mail.message, { 
+      reply_markup: {
+        inline_keyboard: mail.keyboard
+      }, 
+      disable_web_page_preview: !mail.preview 
+    }).then((r) => { mail.success++ }).catch((e) => {
 			(Number.isInteger(mail.errorsCount[e.description])) ? mail.errorsCount[e.description] ++ : mail.errorsCount[e.description] = 1
 			mail.unsuccess++
 		})
+    
     if(Number.isInteger((mail.success + mail.unsuccess) / 100)) {
       const mailUpd = await Mail.findByIdAndUpdate(workerData, {
         success: mail.success,
@@ -39,7 +43,13 @@ function r(){}
     }
   }
 
-  await Mail.findByIdAndUpdate(workerData, { endDate: Date.now(), status: 'ended' })
+  await Mail.findByIdAndUpdate(workerData, { 
+    endDate: Date.now(), 
+    status: 'ended', 
+    success: mail.success, 
+    unsuccess: mail.unsuccess, 
+    errorsCount: mail.errorsCount 
+  })
 
   parentPort.postMessage('complete')
 })()

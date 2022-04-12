@@ -23,6 +23,8 @@ module.exports = async (ctx) => {
 
   await ctx.answerCbQuery()
 
+  ctx.user.state = null
+
   if(count === 0) return ctx.editMessageText(`Нет рассылок`, {
     reply_markup: Markup.inlineKeyboard([
       [Markup.callbackButton(`Добавить`, `admin_mail_add`)], 

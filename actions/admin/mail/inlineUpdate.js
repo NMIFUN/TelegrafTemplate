@@ -35,21 +35,21 @@ module.exports = async ctx => {
   if(mail.lang !== null) mailConfig.lang = mail.lang
   const countUsers = await User.countDocuments(mailConfig)
   
-  const procent = (mail.success + mail.unsuccess)/countUsers
+  const procent = (mail.success + mail.unsuccess) / countUsers
   const time = new Date()
-  time.setSeconds(time.getSeconds + (countUsers - mail.success + mail.unsuccess)*0.07)
+  time.setSeconds(time.getSeconds() + (countUsers - mail.success - mail.unsuccess) * 0.07)
 
   const result = `${statuses[mail.status]}
 
 ${(mail.status === 'notStarted') ? (mail.startDate) ? text.startDate = `Запланирована на ${new Date(mail.startDate).toLocaleString('ru', dateConfig)}` : `Не запланирована`
-: `${(mail.status !== 'completed') ? `🏃 Прогресс выполнения: ${parts[Math.round(procent*10)]} - ${mail.success+mail.unsuccess}/${countUsers} - ${Math.floor(procent * 100)}%` : ''}
+: `${(mail.status !== 'completed') ? `🏃 Прогресс выполнения: [${parts[Math.round(procent*10)]}] - ${mail.success + mail.unsuccess}/${countUsers} - ${Math.floor(procent * 100)}%` : ''}
 
 📊 Статистика:
 📬 Успешно: ${mail.success}
 📭 Неуспешно: ${mail.unsuccess}
 
-${(mail.status === 'doing') ? `⌚️ Окончание через ≈${parseInt((new Date()-time) / (1000 * 60)).toFixed(1)} мин.` : 
-mail.status !== 'notStarted' ? `🕰 Длительность ${parseInt(((mail.endDate ? mail.endDate : Date.now()) - mail.startDate) / (1000 * 60)).toFixed(1)} мин.` : ''}
+${(mail.status === 'doing') ? `⌚️ Окончание через ≈${Math.round((time - new Date()) / (1000 * 60))} мин.` : 
+mail.status !== 'notStarted' ? `🕰 Длительность ${Math.round(((mail.endDate ? new Date(mail.endDate) : new Date()) - new Date(mail.startDate)) / (1000 * 60))} мин.` : ''}
 `}`
 //⚠️ Ошибки: ${Object.entries(mail.errorsCount).map(([key, value]) => `${key} ${value}`).join(', ')}
 

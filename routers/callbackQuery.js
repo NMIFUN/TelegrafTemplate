@@ -14,6 +14,7 @@ router.on('translateBot', require('../actions/translateBot'))
 router.on('subscription', require('../middlewares/subscription'))
 
 router.on('inlineUpdateMail', require('../actions/admin/mail/inlineUpdate'))
+router.on('inlineUpdateView', require('../actions/admin/view/inlineUpdate'))
 
 const adminRouter = new Router(async (ctx) => {
   if (!config.admins.includes(ctx.from.id)) return
@@ -33,15 +34,28 @@ adminRouter.on('ban', require('../actions/admin/ban'))
 const adminViewRouter = new Router(async (ctx) => {
   const split =  ctx.callbackQuery.data.split('_')
 
-  if(!split[2]) split[2] = 'none'
+  if(!split[2]) split[2] = 'nothing'
   ctx.View = View
 
   ctx.state =  split.slice(3, split.length)
   return { route: split[2] }
 })
 
-adminViewRouter.on('none', require('../actions/admin/view'))
-//adminViewRouter.on('add', require('../actions/admin/view/add'))
+adminViewRouter.on('nothing', require('../actions/admin/view'))
+adminViewRouter.on('id', require('../actions/admin/view'))
+
+adminViewRouter.on('add', require('../actions/admin/view/add'))
+
+adminViewRouter.on('keyboard', require('../actions/admin/view/keyboard'))
+adminViewRouter.on('lang', require('../actions/admin/view/lang'))
+adminViewRouter.on('quantity', require('../actions/admin/view/quantity'))
+adminViewRouter.on('preview', require('../actions/admin/view/preview'))
+adminViewRouter.on('unique', require('../actions/admin/view/unique'))
+adminViewRouter.on('editPost', require('../actions/admin/view/editPost'))
+adminViewRouter.on('startDate', require('../actions/admin/view/startDate'))
+adminViewRouter.on('endDate', require('../actions/admin/view/endDate'))
+adminViewRouter.on('delete', require('../actions/admin/view/delete'))
+adminViewRouter.on('none', ctx => ctx.answerCbQuery())
 
 adminRouter.on('view', adminViewRouter)
 

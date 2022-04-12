@@ -7,8 +7,9 @@ module.exports = async (ctx, next) => {
 
     await ctx.answerCbQuery()
     await ctx.editMessageText(ctx.i18n.t('languageSet'))
+
     await ctx.replyWithHTML(ctx.i18n.t('start.text'))
-    
+
     ctx.updateType = 'message'
     return subscription(ctx, next)
   }else{

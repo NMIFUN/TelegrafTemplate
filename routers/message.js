@@ -29,9 +29,7 @@ const commandRouter = new Router(async (ctx) => {
 })
 
 commandRouter.on('admin', require('../actions/admin'))
-
 commandRouter.on('start', require('../actions/start'))
-
 commandRouter.on('lang', require('../actions/translateBot'))
 
 router.on('command', commandRouter)
@@ -46,6 +44,26 @@ const stateRouter = new Router(async (ctx) => {
 adminRouter.on('addAdmin', require('../actions/admin/addAdmin'))
 adminRouter.on('addSubscription', require('../actions/admin/addSubscription'))
 adminRouter.on('ban', require('../actions/admin/ban'))
+
+const adminViewRouter = new Router(async (ctx) => {
+  const cmd = ctx.user.state.split('_')
+
+  ctx.View = View
+  
+  ctx.state = cmd.slice(3, cmd.length)
+  return { route: cmd[2] }
+})
+
+adminViewRouter.on('add', require('../actions/admin/view/add'))
+
+adminViewRouter.on('keyboard', require('../actions/admin/view/keyboard'))
+adminViewRouter.on('lang', require('../actions/admin/view/lang'))
+adminViewRouter.on('quantity', require('../actions/admin/view/quantity'))
+adminViewRouter.on('editPost', require('../actions/admin/view/editPost'))
+adminViewRouter.on('startDate', require('../actions/admin/view/startDate'))
+adminViewRouter.on('endDate', require('../actions/admin/view/endDate'))
+
+adminRouter.on('view', adminViewRouter)
 
 const adminMailRouter = new Router(async (ctx) => {
   const cmd = ctx.user.state.split('_')

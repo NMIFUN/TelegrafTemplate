@@ -6,14 +6,14 @@ module.exports = async (ctx) => {
     await ctx.deleteMessage()
 
     if(ctx.state[1]) {
-      const mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], { keyboard: [] })
+      const view = await ctx.View.findByIdAndUpdate(ctx.state[0], { keyboard: [] })
       return ctx.replyWithHTML(`Клавиатура удалена`, { 
         reply_markup: Markup.inlineKeyboard([
-          Markup.callbackButton(`Продолжить настройку`, `admin_mail_id_${mail._id}`)
+          Markup.callbackButton(`Продолжить настройку`, `admin_view_id_${view._id}`)
         ])
       })
     }
-    ctx.user.state = `admin_mail_keyboard_${ctx.state[0]}`
+    ctx.user.state = `admin_view_keyboard_${ctx.state[0]}`
 
     return ctx.replyWithHTML(`Введите список кнопок в следующем формате:
 
@@ -24,7 +24,7 @@ module.exports = async (ctx) => {
 Кнопка 1 - http://example1.com | Кнопка 2 - http://example2.com
 Кнопка 3 - http://example3.com | Кнопка 4 - http://example4.com`, { 
       reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton(`Назад`, `admin_mail_id_${ctx.state[0]}`)
+        Markup.callbackButton(`Назад`, `admin_view_id_${ctx.state[0]}`)
       ]),
       parse_mode: "HTML"
     })
@@ -47,10 +47,10 @@ module.exports = async (ctx) => {
 
     ctx.user.state = null
 
-    const mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], { keyboard: keyboard })
+    const view = await ctx.View.findByIdAndUpdate(ctx.state[0], { keyboard: keyboard })
     return ctx.replyWithHTML(`Клавиатура сохранена`, { 
       reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton(`Продолжить настройку`, `admin_mail_id_${mail._id}`)
+        Markup.callbackButton(`Продолжить настройку`, `admin_view_id_${view._id}`)
       ])
     })
   }

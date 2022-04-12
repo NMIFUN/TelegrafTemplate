@@ -4,7 +4,7 @@ start:
     Здравствуйте
 languageSet: Язык установлен
 subscribe:
-  text: Вы не подписаны на канал/группу <a href='${channel.link}'>${channel.title}</a>
+  text: Вы должны подписаться на ${channels} для использования бота.
   key: 
     subscribe: Подписаться
     check: Проверить

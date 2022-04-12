@@ -44,7 +44,7 @@ bot.use(async (ctx, next) => {
     ctx.user.lastMessage = Date.now()
     ctx.user.name = convertChars(ctx.from.first_name)
     ctx.user.alive = true
-    ctx.i18n.locale(ctx.user.lang)
+    ctx.i18n.locale(ctx.user.lang || ctx.from.language_code)
   }
 
   await next()
@@ -63,7 +63,7 @@ bot.on('callback_query', require('./routers/callbackQuery'))
 
 bot.on('inline_query', require('./routers/inlineQuery'))
 
-bot.on('my_chat_member', require('./actions/myChatMmber'))
+bot.on('my_chat_member', require('./actions/myChatMember'))
 
 bot.launch(
   (process.env.USE_WEBHOOK==='true') ? {

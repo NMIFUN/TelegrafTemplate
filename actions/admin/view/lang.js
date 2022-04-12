@@ -6,25 +6,25 @@ module.exports = async (ctx) => {
     await ctx.deleteMessage()
 
     if(ctx.state[1]) {
-      const mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], { lang: null })
+      const view = await ctx.View.findByIdAndUpdate(ctx.state[0], { lang: null })
       return ctx.replyWithHTML(`Язык удален`, { 
         reply_markup: Markup.inlineKeyboard([
-          Markup.callbackButton(`Продолжить настройку`, `admin_mail_id_${mail._id}`)
+          Markup.callbackButton(`Продолжить настройку`, `admin_view_id_${view._id}`)
         ])
       })
     }
 
-    ctx.user.state = `admin_mail_lang_${ctx.state[0]}`
+    ctx.user.state = `admin_view_lang_${ctx.state[0]}`
 
     return ctx.replyWithHTML(`Введите язык.\n\nПример: ru`, { 
       reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton(`Назад`, `admin_mail_id_${ctx.state[0]}`)
+        Markup.callbackButton(`Назад`, `admin_view_id_${ctx.state[0]}`)
       ]),
       parse_mode: "HTML"
     })
   }else{
     try {
-      var mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], { lang: ctx.message.text })
+      var view = await ctx.View.findByIdAndUpdate(ctx.state[0], { lang: ctx.message.text })
     } catch (error) {
       return ctx.reply(`Ошибка при сохранении: ${error}`)
     }
@@ -33,7 +33,7 @@ module.exports = async (ctx) => {
 
     return ctx.replyWithHTML(`Язык сохранен`, { 
       reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton(`Продолжить настройку`, `admin_mail_id_${mail._id}`)
+        Markup.callbackButton(`Продолжить настройку`, `admin_view_id_${view._id}`)
       ])
     })
   }

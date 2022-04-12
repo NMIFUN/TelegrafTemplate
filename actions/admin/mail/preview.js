@@ -8,7 +8,7 @@ module.exports = async (ctx) => {
   mail.preview = !mail.preview
   await mail.save()
 
-  return ctx.replyWithHTML(`Превью ${mail.preview ? 'включено' : 'выключено'}`, { 
+  return ctx.replyWithHTML(`Превью ${mail.preview ? 'включено' : 'выключено'}.`, { 
     reply_markup: Markup.inlineKeyboard([
       Markup.callbackButton(`Продолжить настройку`, `admin_mail_id_${ctx.state[0]}`)
     ]),

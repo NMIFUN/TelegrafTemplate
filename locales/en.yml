@@ -4,7 +4,7 @@ start:
     Hello
 languageSet: Language set
 subscribe:
-  text: You are not subscribed to the channel/group <a href='${channel.link}'>${channel.title}</a>
+  text: You must subscribe to ${channels} to use the bot.
   key:
     subscribe: Subscribe
     check: Check

@@ -16,7 +16,7 @@ module.exports = async (ctx) => {
 
     ctx.user.state = `admin_mail_startDate_${ctx.state[0]}`
 
-    return ctx.replyWithHTML(`Введите дату и время начала рассылки (2022.09.26 12:30)`, { 
+    return ctx.replyWithHTML(`Введите дату и время начала рассылки.\n\nПример: 2022.09.26 12:30`, { 
       reply_markup: Markup.inlineKeyboard([
         Markup.callbackButton(`Назад`, `admin_mail_id_${ctx.state[0]}`)
       ]),

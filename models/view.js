@@ -8,7 +8,7 @@ let View = mongoose.Schema({
 	lang: { type: String, default: null },
   preview: { type: Boolean, default: true },
   unique: { type: Boolean, default: false },
-  views: Number,
+  views: { type: Number, default: 0 },
   users: Array,
   startDate: { type: Date, index: true }, 
   endDate: { type: Date, index: true }

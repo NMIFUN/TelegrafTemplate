@@ -8,7 +8,11 @@ module.exports = async (ctx) => {
   if(a<0) return ctx.answerCbQuery('Нельзя', true)
 
   const count = await Ref.countDocuments()
-  if(a >= count) return ctx.answerCbQuery('Нельзя', true)
+  if(a >= count) return ctx.editMessageText(`Реферальных ссылок еще не существует.\n
+<code>https://t.me/${process.env.BOT_USERNAME}?start=ref-</code>code, переходя по такой ссылке пользователь автоматически учитывается в списке.
+code - любой код для отличия ссылки от других ссылок`, Markup.inlineKeyboard(
+    [Markup.callbackButton(`Назад`, `admin_back`)]
+  ).extra())
 
   await ctx.answerCbQuery()
 
@@ -26,13 +30,13 @@ module.exports = async (ctx) => {
   return ctx.editMessageText(`
 <code>https://t.me/${process.env.BOT_USERNAME}?start=ref-</code>code, переходя по такой ссылке пользователь автоматически учитывается в списке.
 code - любой код для отличия ссылки от других ссылок
-${content}`, {  
+${content}`, {
     parse_mode: 'HTML',
     reply_markup: Markup.inlineKeyboard([
       [Markup.callbackButton(`◀️`, `admin_sysRef_${a-10}`),
       Markup.callbackButton(`${a + results.length}/${count} 🔄`, `admin_sysRef_${a}`),
       Markup.callbackButton(`▶️`, `admin_sysRef_${a+10}`)],
-      [Markup.callbackButton(`◀️`, `admin_back`)]
+      [Markup.callbackButton(`Назад`, `admin_back`)]
     ])
   })
 }
