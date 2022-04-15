@@ -1,23 +1,36 @@
 const User = require('../../models/user')
 const Markup = require('telegraf/markup')
+var exportTemplate = {
+  _id: '', id: '', name: '', username: '', createdAt: '', ban: '', langCode: '', alive: '', from: '', lastMessage: '', age: '', sex: ''
+}
 
 module.exports = async (ctx) => {
   if(ctx.state[0]) {
     await ctx.answerCbQuery(`Экспортирование`, true)
 
-    if(ctx.state[0] === 'all'){
-      var users = await User.find({}, 'id')
-    } else if(ctx.state[0] === 'alive'){
-      var users = await User.find({ alive: true }, 'id')
+    switch (ctx.state[0]) {
+      case 'alive':
+        var users = await User.find({}, '-_id id').lean()
+      case 'all':
+        var users = await User.find({ alive: true }, '-_id id').lean()
+
+        var content = users.map((value) => Object.values(value).join(';')).join('\n')
+        break
+      case 'full':
+        var users = await User.find({},  Object.keys(exportTemplate).join(' ')).lean()
+
+        var content = Object.keys(exportTemplate).join(';')
+        content += `\n${users.map((value) => Object.values({ ...exportTemplate, ...value }).join(';')).join('\n')}`
+        break
     }
 
-    let content = Object.values(users).map((value) => `${value.id}`).join('\n')
-    return ctx.replyWithDocument({ source: Buffer.from(content), filename: `users.csv` })
+    return ctx.replyWithDocument({ source: Buffer.from(content, 'utf8'), filename: `users.csv` })
   } else {
     await ctx.answerCbQuery()
 
     return ctx.editMessageText(`Выберите вариант экспорта:`, Markup.inlineKeyboard([
       [
+        Markup.callbackButton(`Бекап`, `admin_listUsers_full`),
         Markup.callbackButton(`Полный`, `admin_listUsers_all`),
         Markup.callbackButton(`Живые`, `admin_listUsers_alive`),
       ], 

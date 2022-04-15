@@ -10,10 +10,16 @@ let User = mongoose.Schema({
 	name: String,
 	username: String,
 	state: String,
-	ban: Boolean,
 	lang: String,
+	ban: {
+    type: Boolean,
+    default: false
+  },
 	langCode: String,
-	alive: Boolean,
+	alive: {
+    type: Boolean,
+    default: true
+  },
   from: String,
   lastMessage: Date
 }, {

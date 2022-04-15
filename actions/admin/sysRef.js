@@ -12,7 +12,7 @@ module.exports = async (ctx) => {
 <code>https://t.me/${process.env.BOT_USERNAME}?start=ref-</code>code, переходя по такой ссылке пользователь автоматически учитывается в списке.
 code - любой код для отличия ссылки от других ссылок`, Markup.inlineKeyboard(
     [Markup.callbackButton(`Назад`, `admin_back`)]
-  ).extra())
+  ).extra({ parse_mode: 'HTML' }))
 
   await ctx.answerCbQuery()
 
