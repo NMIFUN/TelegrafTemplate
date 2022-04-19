@@ -2,6 +2,8 @@ const User = require('../../models/user.js')
 const Markup = require('telegraf/markup')
 
 module.exports = async (ctx) => {
+  await ctx.answerCbQuery()
+  
   const promises = [
     await User.countDocuments(),
     await User.countDocuments({ alive: true }),
