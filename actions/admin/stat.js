@@ -29,6 +29,7 @@ RU: ${ru}
 EN: ${en}`
 
   return ctx.editMessageText(text, Markup.inlineKeyboard([
-    Markup.callbackButton(`Назад`, `admin_back`)
+    [Markup.callbackButton(`Обновить`, `admin_stat`)],
+    [Markup.callbackButton(`Назад`, `admin_back`)]
   ]).extra({ parse_mode: "HTML" }))
 }

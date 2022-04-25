@@ -25,7 +25,6 @@ module.exports = async (ctx) => {
     ],
     [
       Markup.callbackButton(`(Раз)бан пользователя`, `admin_ban`),
-      Markup.callbackButton(`Обновить`, `admin_back`)
     ]
   ]).extra()
 
