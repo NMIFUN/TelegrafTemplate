@@ -10,9 +10,12 @@ module.exports = async (ctx) => {
 
     switch (ctx.state[0]) {
       case 'alive':
-        var users = await User.find({}, '-_id id').lean()
-      case 'all':
         var users = await User.find({ alive: true }, '-_id id').lean()
+
+        var content = users.map((value) => Object.values(value).join(';')).join('\n')
+        break
+      case 'all':
+        var users = await User.find({}, '-_id id').lean()
 
         var content = users.map((value) => Object.values(value).join(';')).join('\n')
         break
