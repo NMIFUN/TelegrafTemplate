@@ -18,7 +18,7 @@ module.exports = async (ctx, next) => {
   if(find) {
     const findIclude = find.users.includes(ctx.from.id)
     if(findIclude) await Ref.updateOne({ name: cmd[1] }, { $inc: { count: 1, newCount: newCount }, $set: { last: date }})
-    await Ref.updateOne({ name: cmd[1] }, { $inc: { count: 1, newCount: newCount, uniqueCount: 1}, $push: { users: ctx.from.id }, $set: { last: date }})
+    else await Ref.updateOne({ name: cmd[1] }, { $inc: { count: 1, newCount: newCount, uniqueCount: 1}, $push: { users: ctx.from.id }, $set: { last: date }})
   }else{
     await Ref.create({
       name: cmd[1],

@@ -17,7 +17,7 @@ function r(){}
   }
   if(mail.lang !== null) mailConfig.lang = mail.lang
 
-  const users = await User.find(mailConfig, { id: 1 }).skip(mail.success + mail.unsuccess).limit(mail.quantity - mail.success + mail.unsuccess)
+  const users = await User.find(mailConfig, { id: 1 }).skip(mail.success + mail.unsuccess).limit((mail.quantity && mail.quantity - mail.success + mail.unsuccess) || 10000000)
   mail.status = 'doing'
   if(mail.success + mail.unsuccess === 0) mail.startDate = Date.now()
   await mail.save()

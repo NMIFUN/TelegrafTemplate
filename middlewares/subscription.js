@@ -11,7 +11,7 @@ module.exports = async (ctx, next) => {
       reply_markup: Markup.inlineKeyboard([
         ...config.subsChannels.map(element => Markup.urlButton(element.title, element.link)),
         Markup.callbackButton(ctx.i18n.t('subscribe.key.check'), `subscription`)
-      ]),
+      ], { columns: 1 }),
       disable_web_page_preview: true
     })
   }
