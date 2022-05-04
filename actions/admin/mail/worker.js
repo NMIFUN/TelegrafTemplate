@@ -13,7 +13,7 @@ function r(){}
   let mail = await Mail.findById(workerData)
   
   const mailConfig = {
-    //alive: true
+    alive: true
   }
   if(mail.lang !== null) mailConfig.lang = mail.lang
 
