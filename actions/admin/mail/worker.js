@@ -13,17 +13,27 @@ function r(){}
   let mail = await Mail.findById(workerData)
   
   const mailConfig = {
-    alive: true
+    //alive: true
   }
   if(mail.lang !== null) mailConfig.lang = mail.lang
 
   const users = await User.find(mailConfig, { id: 1 }).skip(mail.success + mail.unsuccess).limit((mail.quantity && mail.quantity - mail.success + mail.unsuccess) || 10000000)
+
   mail.status = 'doing'
-  if(mail.success + mail.unsuccess === 0) mail.startDate = Date.now()
+  if(mail.success + mail.unsuccess === 0) {
+    mail.startDate = Date.now()
+    mail.all = users.length
+  }
   await mail.save()
 
-  for (const user of users) {
-    await bot.telegram.sendCopy(user.id, mail.message, { 
+  const message = mail.message
+  const message1 = { ...mail.message, chat: {} }
+
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i]
+
+    let promises = []
+    promises.push(bot.telegram.sendCopy(user.id, i % 2 === 0 ? message : message1, { 
       reply_markup: {
         inline_keyboard: mail.keyboard
       }, 
@@ -31,9 +41,15 @@ function r(){}
     }).then((r) => { mail.success++ }).catch((e) => {
 			(Number.isInteger(mail.errorsCount[e.description])) ? mail.errorsCount[e.description] ++ : mail.errorsCount[e.description] = 1
 			mail.unsuccess++
-		})
+		}))
     
-    if(Number.isInteger((mail.success + mail.unsuccess) / 100)) {
+    if(i % 10 === 0) {
+      await Promise.all(promises)
+      promises = []
+      await sleep(80)
+    }
+
+    if(i % 100 === 0) {
       const mailUpd = await Mail.findByIdAndUpdate(workerData, {
         success: mail.success,
         unsuccess: mail.unsuccess,
@@ -44,11 +60,12 @@ function r(){}
   }
 
   await Mail.findByIdAndUpdate(workerData, { 
-    endDate: Date.now(), 
-    status: 'ended', 
-    success: mail.success, 
-    unsuccess: mail.unsuccess, 
-    errorsCount: mail.errorsCount 
+    endDate: Date.now(),
+    status: 'ended',
+    success: mail.success,
+    unsuccess: mail.unsuccess,
+    all: mail.success + mail.unsuccess,
+    errorsCount: mail.errorsCount
   })
 
   parentPort.postMessage('complete')

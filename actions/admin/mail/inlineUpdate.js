@@ -33,16 +33,15 @@ module.exports = async ctx => {
     alive: true
   }
   if(mail.lang !== null) mailConfig.lang = mail.lang
-  const countUsers = await User.countDocuments(mailConfig)
   
-  const procent = (mail.success + mail.unsuccess) / countUsers
+  const procent = (mail.success + mail.unsuccess) / mail.all
   const time = new Date()
-  time.setSeconds(time.getSeconds() + (countUsers - mail.success - mail.unsuccess) * 0.07)
+  time.setSeconds(time.getSeconds() + (mail.all - mail.success - mail.unsuccess) * 0.016)
 
   const result = `${statuses[mail.status]}
 
 ${(mail.status === 'notStarted') ? (mail.startDate) ? text.startDate = `Запланирована на ${new Date(mail.startDate).toLocaleString('ru', dateConfig)}` : `Не запланирована`
-: `${(mail.status !== 'completed') ? `🏃 Прогресс выполнения: [${parts[Math.round(procent*10)]}] - ${mail.success + mail.unsuccess}/${countUsers} - ${Math.floor(procent * 100)}%` : ''}
+: `${(mail.status !== 'completed') ? `🏃 Прогресс выполнения: [${parts[Math.round(procent*10)]}] - ${mail.success + mail.unsuccess}/${mail.all} - ${Math.floor(procent * 100)}%` : ''}
 
 📊 Статистика:
 📬 Успешно: ${mail.success}

@@ -10,6 +10,7 @@ let Mail = mongoose.Schema({
   preview: { type: Boolean, default: true },
 	success: { type: Number, default: 0 },
 	unsuccess: { type: Number, default: 0 },
+  all: { type: Number, default: 0 },
 	startDate: Date, endDate: Date,
 	errorsCount: { type: Object, default: {} },
 })
