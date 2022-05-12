@@ -13,7 +13,7 @@ module.exports = async (ctx) => {
       parse_mode: "HTML"
     })
   }else{
-    const view = await ctx.View.findByIdAndUpdate(ctx.state[0], { keyboard: ctx.message.reply_markup, message: ctx.message })
+    const view = await ctx.View.findByIdAndUpdate(ctx.state[0], { keyboard: ctx.message?.reply_markup?.inline_keyboard, message: ctx.message })
     ctx.user.state = null
 
     return ctx.replyWithHTML(`Пост сохранен`, { 

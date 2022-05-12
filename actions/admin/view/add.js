@@ -16,7 +16,7 @@ module.exports = async (ctx) => {
     const view = ctx.View({
       uid: ctx.from.id,
       message: ctx.message,
-      keyboard: ctx.message.reply_markup,
+      keyboard: ctx.message?.reply_markup?.inline_keyboard,
       status: 'notStarted',
     })
     await view.save()

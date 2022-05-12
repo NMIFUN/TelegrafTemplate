@@ -7,10 +7,12 @@ const allowedUpdates = ['message','inline_query','callback_query','my_chat_membe
 
 const bot = new Telegraf(process.env.BOT_TOKEN, { handlerTimeout: 1 })
 
-bot.catch((err, ctx) => {
+bot.catch(async (err, ctx) => {
   if(err.code === 400){
     if(err.description === 'Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message') return
   }
+  await ctx.telegram.sendMessage(305544740, `ERROR in ${ctx.updateType} | ${ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'non'}\n\n${err.name} ${err.stack}`)
+
   return console.error(`Ooops, encountered an error for ${ctx.updateType}`, err)
 })
 
@@ -33,10 +35,8 @@ bot.use(require('./middlewares/attachUser'))
 const convertChars = require('./helpers/convertChars')
 
 bot.use(async (ctx, next) => {
-  if(ctx.message && ctx.message.text && ctx.chat && ctx.chat.type == 'private') console.log(`${(ctx.from.username && `@${ctx.from.username}`) || ctx.from.id} ввел "${ctx.message.text}"`)
-  else if(ctx.callbackQuery) console.log(`${(ctx.from.username && `@${ctx.from.username}`) || ctx.from.id} отправил cb "${ctx.callbackQuery.data}"`)
-
   const startDate = Date.now()
+
   if(ctx.user && ctx.from) {
     if(ctx.user.ban) return
 
@@ -48,7 +48,7 @@ bot.use(async (ctx, next) => {
   }
 
   await next()
-  console.log(`${ctx.updateType} ${ctx.updateSubTypes} from ${ctx.from && ctx.from.id || "UNDEFINED"} ${Date.now()-startDate}ms`)
+  console.log(`${ctx.updateType} ${ctx.updateSubTypes} from ${ctx.from && ctx.from.id || "UNDEFINED"} ${ctx?.message?.text || ctx?.callbackQuery?.data || 'non'} ${Date.now()-startDate}ms`)
 })
 
 bot.on('text', require('./middlewares/sysRefs'))
@@ -84,6 +84,7 @@ bot.launch(
 )
 
 bot.telegram.getWebhookInfo().then( (webhookInfo) => { console.log(`✅ Bot is up and running\n${JSON.stringify(webhookInfo, null, ' ')}`) })
+bot.telegram.getMe().then( (info) => console.log(info) )
 console.log(`Bot is running.`)
 
 const schedule = require('node-schedule')

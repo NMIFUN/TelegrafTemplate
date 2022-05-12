@@ -32,7 +32,9 @@ function r(){}
   for (let i = 0; i < users.length; i++) {
     const user = users[i]
 
+    let died = []
     let promises = []
+
     promises.push(bot.telegram.sendCopy(user.id, i % 2 === 0 ? message : message1, { 
       reply_markup: {
         inline_keyboard: mail.keyboard
@@ -41,12 +43,13 @@ function r(){}
     }).then((r) => { mail.success++ }).catch((e) => {
 			(Number.isInteger(mail.errorsCount[e.description])) ? mail.errorsCount[e.description] ++ : mail.errorsCount[e.description] = 1
 			mail.unsuccess++
+      died.push(user.id)
 		}))
     
     if(i % 10 === 0) {
       await Promise.all(promises)
       promises = []
-      await sleep(80)
+      await sleep(70)
     }
 
     if(i % 100 === 0) {
@@ -55,6 +58,9 @@ function r(){}
         unsuccess: mail.unsuccess,
         errorsCount: mail.errorsCount
       })
+      await User.updateMany({ id: { $in: died } }, { alive: false })
+      died = []
+
       if(mailUpd.status === 'paused' || mailUpd.status === 'stopped') return parentPort.postMessage('stop')
     }
   }
