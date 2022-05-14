@@ -11,7 +11,7 @@ bot.catch(async (err, ctx) => {
   if(err.code === 400){
     if(err.description === 'Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message') return
   }
-  await ctx.telegram.sendMessage(305544740, `ERROR in ${ctx.updateType} | ${ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'non'}\n\n${err.name} ${err.stack}`)
+  await ctx.telegram.sendMessage(305544740, `ERROR in ${ctx.updateType} | ${ctx?.from?.id || 'empty'} | ${ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'empty'}\n\n${err.name}\n${err.stack}\n${err.on && JSON.stringify(err.on, null, ' ') || 'empty'}`)
 
   return console.error(`Ooops, encountered an error for ${ctx.updateType}`, err)
 })

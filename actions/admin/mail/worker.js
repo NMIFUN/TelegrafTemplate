@@ -28,28 +28,34 @@ function r(){}
 
   const message = mail.message
   const message1 = { ...mail.message, chat: {} }
+  
+  let promises = []
+  let died = []
 
   for (let i = 0; i < users.length; i++) {
     const user = users[i]
-
-    let died = []
-    let promises = []
 
     promises.push(bot.telegram.sendCopy(user.id, i % 2 === 0 ? message : message1, { 
       reply_markup: {
         inline_keyboard: mail.keyboard
       }, 
       disable_web_page_preview: !mail.preview 
-    }).then((r) => { mail.success++ }).catch((e) => {
+    }).then((r) => { mail.success++ }).catch(async (e) => {
 			(Number.isInteger(mail.errorsCount[e.description])) ? mail.errorsCount[e.description] ++ : mail.errorsCount[e.description] = 1
-			mail.unsuccess++
-      died.push(user.id)
+
+      if(e.description.startsWith('Too Many Requests:')) {
+        await sleep(parseInt(e.description.match(/\d+/)) * 1000)
+        i--
+      } else {
+        mail.unsuccess++
+        died.push(user.id)
+      }
 		}))
     
     if(i % 10 === 0) {
       await Promise.all(promises)
       promises = []
-      await sleep(70)
+      await sleep(160)
     }
 
     if(i % 100 === 0) {
@@ -58,12 +64,16 @@ function r(){}
         unsuccess: mail.unsuccess,
         errorsCount: mail.errorsCount
       })
+
       await User.updateMany({ id: { $in: died } }, { alive: false })
       died = []
 
       if(mailUpd.status === 'paused' || mailUpd.status === 'stopped') return parentPort.postMessage('stop')
     }
   }
+
+  await Promise.all(promises)
+  await User.updateMany({ id: { $in: died } }, { alive: false })
 
   await Mail.findByIdAndUpdate(workerData, { 
     endDate: Date.now(),
