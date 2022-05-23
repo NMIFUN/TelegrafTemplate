@@ -6,9 +6,12 @@ module.exports = async (ctx) => {
   if(ctx.updateType === 'callback_query') {
     await ctx.answerCbQuery()
     ctx.user.state = `admin_addSubscription`
-    return ctx.editMessageText(`Для добавления канала/чата на обязательную подписку введите id/@username и ссылку через пробел\nПример: <code>-1001488198124 https://t.me/+WLQZ7FtUjj65e93L</code>\n
+    return ctx.editMessageText(`Для добавления канала/чата на обязательную подписку введите id/@username и ссылку (и код языка если нужно) через пробел\nПример: 
+<code>-1001488198124 https://t.me/+WLQZ7FtUjj65e93L</code>
+<code>-1001488198124 https://t.me/+WLQZ7FtUjj65e93L ru</code>
+
 Для удаления канала/чата из обязательной подписки введите его id\n
-Текущий список каналов/чатов на обязательную подписку: ${config.subsChannels.map(e => `<a href='${e.link}'>${e.title}</a> (<code>${e.id}</code>)`).join(", ")}`, { 
+Текущий список каналов/чатов на обязательную подписку: ${config.subsChannels.map(e => `<a href='${e.link}'>${e.title}</a> ${e.lang} (<code>${e.id}</code>)`).join(", ")}`, { 
       ...admin.backKeyboard,
       parse_mode: "HTML",
       disable_web_page_preview: true
@@ -31,7 +34,8 @@ module.exports = async (ctx) => {
       if(find === -1) config.subsChannels.push({
         link: list[1],
         title: getChat.title,
-        id: getChat.id
+        id: getChat.id,
+        lang: list[2] || 'all'
       })
       else config.subsChannels.splice(find, 1)
     }
@@ -39,7 +43,7 @@ module.exports = async (ctx) => {
     await fs.writeFile('config.json', JSON.stringify(config))
 
     return ctx.replyWithHTML(`Список каналов/чатов на обязательную подписку обновлен.\n
-Текущий список: ${config.subsChannels.map(e => `<a href='${e.link}'>${e.title}</a> (<code>${e.id}</code>)`).join(", ")}`, { 
+Текущий список: ${config.subsChannels.map(e => `<a href='${e.link}'>${e.title}</a> ${e.lang} (<code>${e.id}</code>)`).join(", ")}`, { 
       ...admin.backKeyboard,
       disable_web_page_preview: true
     })

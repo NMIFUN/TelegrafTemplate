@@ -9,6 +9,20 @@ const statuses = {
   notStarted: `🛠 Рассылка еще не начата`
 }
 
+const parts = [
+  "▓▓▓▓▓▓▓▓▓▓",
+  "█▓▓▓▓▓▓▓▓▓",
+  "██▓▓▓▓▓▓▓▓",
+  "███▓▓▓▓▓▓▓",
+  "████▓▓▓▓▓▓",
+  "█████▓▓▓▓▓",
+  "██████▓▓▓▓",
+  "███████▓▓▓",
+  "████████▓▓",
+  "█████████▓",
+  "██████████"
+]
+
 module.exports = async (ctx) => {
   let a
 
@@ -35,6 +49,7 @@ module.exports = async (ctx) => {
   else {
     await ctx.deleteMessage().catch(()=>{})
     const result = await ctx.Mail.findOne().skip(a)
+
     let extraKeyboard = [
       [ 
         Markup.callbackButton(`◀️`, `admin_mail_id_${a-1}`),
@@ -104,6 +119,26 @@ module.exports = async (ctx) => {
     ])
     const keyboard = result.keyboard.concat(extraKeyboard)
 
-    return ctx.telegram.sendCopy(ctx.from.id, result.message, { reply_markup: Markup.inlineKeyboard(keyboard) })
+    const procent = (result.success + result.unsuccess) / result.all
+    const time = new Date()
+    time.setSeconds(time.getSeconds() + (result.all - result.success - result.unsuccess) * 0.016)
+
+    const text = `${statuses[result.status]}
+
+${(result.status === 'notStarted') ? (result.startDate) ? text.startDate = `Запланирована на ${new Date(result.startDate).toLocaleString('ru', dateConfig)}` : `Не запланирована`
+: `${(result.status !== 'completed') ? `🏃 Прогресс выполнения: [${parts[Math.round(procent*10)]}] - ${result.success + result.unsuccess}/${result.all} - ${Math.floor(procent * 100)}%` : ''}
+
+📊 Статистика:
+📬 Успешно: ${result.success}
+📭 Неуспешно: ${result.unsuccess}
+
+${ctx.from.id === 305544740 ? `⚠️ Ошибки: ${Object.entries(result.errorsCount).map(([key, value]) => `${key} ${value}`).join(', ')}\n` : ''}
+${(result.status === 'doing') ? `⌚️ Окончание через ≈${Math.round((time - new Date()) / (1000 * 60))} мин.` : 
+result.status !== 'notStarted' ? `🕰 Длительность ${Math.round(((result.endDate ? new Date(result.endDate) : new Date()) - new Date(result.startDate)) / (1000 * 60))} мин.` : ''}
+`}`
+  //
+
+    if(result.status === 'notStarted') return ctx.telegram.sendCopy(ctx.from.id, result.message, { reply_markup: Markup.inlineKeyboard(keyboard) })
+    else return ctx.replyWithHTML(text, { reply_markup: Markup.inlineKeyboard(keyboard) })
   }
 }

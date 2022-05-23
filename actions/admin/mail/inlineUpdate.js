@@ -29,11 +29,6 @@ module.exports = async ctx => {
   await ctx.answerCbQuery()
   const mail = await Mail.findById(ctx.state[0])
 
-  const mailConfig = {
-    alive: true
-  }
-  if(mail.lang !== null) mailConfig.lang = mail.lang
-  
   const procent = (mail.success + mail.unsuccess) / mail.all
   const time = new Date()
   time.setSeconds(time.getSeconds() + (mail.all - mail.success - mail.unsuccess) * 0.016)
