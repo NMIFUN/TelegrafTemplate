@@ -57,7 +57,12 @@ module.exports = async (ctx) => {
     ] 
 
     if(result.status === 'notStarted') extraKeyboard = extraKeyboard.concat([
-      [  Markup.callbackButton(`🕓 Начало ${result.startDate ? new Date(result.startDate).toLocaleString('ru', dateConfig) : '❌'}`, `admin_view_startDate_${result._id}`),
+      [ 
+        Markup.callbackButton(`🔘 Кнопки ${result.keyboard.length ? '✅' : '❌'}`, `admin_mail_keyboard_${result._id}`),
+        Markup.callbackButton(`🧹`, `admin_mail_keyboard_${result._id}_del`),
+      ],
+      [  
+        Markup.callbackButton(`🕓 Начало ${result.startDate ? new Date(result.startDate).toLocaleString('ru', dateConfig) : '❌'}`, `admin_view_startDate_${result._id}`),
         Markup.callbackButton(`🧹`, `admin_view_startDate_${result._id}_del`),
       ],
       [ 
@@ -97,6 +102,8 @@ module.exports = async (ctx) => {
     ])
     const keyboard = result.keyboard.concat(extraKeyboard)
 
+    delete result.message.chat
+    
     return ctx.telegram.sendCopy(ctx.from.id, result.message, { reply_markup: Markup.inlineKeyboard(keyboard) })
   }
 }

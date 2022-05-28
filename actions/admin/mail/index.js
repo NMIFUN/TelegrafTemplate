@@ -61,7 +61,8 @@ module.exports = async (ctx) => {
       ]
     ] 
 
-    if(result.status === 'notStarted') extraKeyboard = extraKeyboard.concat([[ 
+    if(result.status === 'notStarted') extraKeyboard = extraKeyboard.concat([
+      [ 
         Markup.callbackButton(`🔘 Кнопки ${result.keyboard.length ? '✅' : '❌'}`, `admin_mail_keyboard_${result._id}`),
         Markup.callbackButton(`🧹`, `admin_mail_keyboard_${result._id}_del`),
       ],
@@ -137,6 +138,7 @@ ${(result.status === 'doing') ? `⌚️ Окончание через ≈${Math.
 result.status !== 'notStarted' ? `🕰 Длительность ${Math.round(((result.endDate ? new Date(result.endDate) : new Date()) - new Date(result.startDate)) / (1000 * 60))} мин.` : ''}
 `}`
   //
+    delete result.message.chat
 
     if(result.status === 'notStarted') return ctx.telegram.sendCopy(ctx.from.id, result.message, { reply_markup: Markup.inlineKeyboard(keyboard) })
     else return ctx.replyWithHTML(text, { reply_markup: Markup.inlineKeyboard(keyboard) })

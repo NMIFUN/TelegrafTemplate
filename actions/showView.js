@@ -18,6 +18,7 @@ module.exports = async (ctx) => {
   
   if(views.length !== 0) {
     const view = views[randomInt(0, views.length)]
+    delete view.message.chat
 
     promises.push(await ctx.telegram.sendCopy(ctx.from.id, view.message, { 
       reply_markup: {
