@@ -126,7 +126,7 @@ module.exports = async (ctx) => {
 
     const text = `${statuses[result.status]}
 
-${(result.status === 'notStarted') ? (result.startDate) ? text.startDate = `Запланирована на ${new Date(result.startDate).toLocaleString('ru', dateConfig)}` : `Не запланирована`
+${(result.status === 'notStarted') ? (result.startDate) ? `Запланирована на ${new Date(result.startDate).toLocaleString('ru', dateConfig)}` : `Не запланирована`
 : `${(result.status !== 'completed') ? `🏃 Прогресс выполнения: [${parts[Math.round(procent*10)]}] - ${result.success + result.unsuccess}/${result.all} - ${Math.floor(procent * 100)}%` : ''}
 
 📊 Статистика:
