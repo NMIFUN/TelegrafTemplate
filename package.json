@@ -1,19 +1,21 @@
 {
   "dependencies": {
+    "axios": "^0.27.2",
     "dotenv": "^10.0.0",
-    "fs": "^0.0.1-security",
     "js-yaml": "^4.1.0",
     "mongoose": "^6.1.0",
     "node-schedule": "^2.1.0",
     "telegraf": "github:NMIFUN/telegraf",
-    "telegraf-i18n": "^6.6.0"
+    "telegraf-i18n": "^6.6.0",
+    "telegraf-ratelimit": "^2.0.0"
   },
   "name": "telegraf-bot-template",
   "version": "1.0.0",
   "description": "Telegram bot starter based on Telegraf",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "pm2 start.config.js"
   },
   "repository": {
     "type": "git",

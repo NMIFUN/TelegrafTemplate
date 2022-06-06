@@ -1,13 +1,12 @@
 name: 🇬🇧 English
 start:
   text: |
-    Здравствуйте
-languageSet: Язык установлен
+    Hello
+languageSet: Language set
 subscribe:
-  notif: Вы не подписаны!
-  channel: Канал
-  text: Вы должны подписаться на каналы/группы для использования бота.
-  key: 
-    subscribe: Подписаться
-    check: Проверить
-  success: Вы подписались на каналы/группы и теперь можете пользоваться ботом.
+  notif: You are not subscribed!
+  channel: Channel
+  text: You must subscribe to channels/groups to use the bot.
+  keys:
+    check: Check
+  success: You have subscribed to channels/groups and can now use the bot.

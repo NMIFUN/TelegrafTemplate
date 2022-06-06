@@ -9,9 +9,14 @@ const bot = new Telegraf(process.env.BOT_TOKEN, { handlerTimeout: 1 })
 
 bot.catch(async (err, ctx) => {
   if(err.code === 400){
-    if(err.description === 'Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message') return
-  }
-  await ctx.telegram.sendMessage(305544740, `ERROR in ${ctx.updateType} | ${ctx?.from?.id || 'empty'} | ${ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'empty'}\n\n${err.name}\n${err.stack}\n${err.on && JSON.stringify(err.on, null, ' ') || 'empty'}`)
+    if(err.description && 
+      [
+        'Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message',
+        'Bad Request: message to delete not found',
+        'Forbidden: bot was blocked by the user'
+      ].includes(err.description)) return
+    }
+  await ctx.telegram.sendMessage(305544740, `ERROR in ${ctx.updateType} | ${ctx?.from?.id || 'empty'} | ${ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'empty'} ${ctx?.user?.state || 'not state'}\n\n${err.name}\n${err.stack}\n${err.on && JSON.stringify(err.on, null, ' ') || 'empty'}`)
 
   return console.error(`Ooops, encountered an error for ${ctx.updateType}`, err)
 })
@@ -87,6 +92,9 @@ bot.telegram.getWebhookInfo().then( (webhookInfo) => { console.log(`✅ Bot is u
 bot.telegram.getMe().then( (info) => console.log(info) )
 console.log(`Bot is running.`)
 
+const updateAlive = require('./helpers/updateAlive')
+const botStat = require('./helpers/botStat')
+
 const schedule = require('node-schedule')
 const Mail = require('./models/mail')
 const lauchWorker = require('./actions/admin/mail/lauchWorker')
@@ -97,7 +105,13 @@ function r(){}
   if(result) lauchWorker(result._id)
 })()
 
-const job = schedule.scheduleJob('0 * * * * *', async () => {
+const startMail = schedule.scheduleJob('0 * * * * *', async () => {
   const result = await Mail.findOne({ status: 'notStarted', startDate: { $exists: true, $lte: new Date() } })
   if(result) lauchWorker(result._id)
+})
+
+const checkAlive = schedule.scheduleJob('0 0 0 * * */2', async () => {
+  await updateAlive(bot)
+
+  await botStat()
 })

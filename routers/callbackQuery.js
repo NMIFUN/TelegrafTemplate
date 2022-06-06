@@ -31,6 +31,7 @@ adminRouter.on('listUsers', require('../actions/admin/listUsers'))
 adminRouter.on('sysRef', require('../actions/admin/sysRef'))
 adminRouter.on('ban', require('../actions/admin/ban'))
 adminRouter.on('stat', require('../actions/admin/stat'))
+adminRouter.on('botStat', require('../actions/admin'))
 
 const adminViewRouter = new Router(async (ctx) => {
   const split =  ctx.callbackQuery.data.split('_')

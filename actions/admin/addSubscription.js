@@ -5,7 +5,9 @@ const fs = require('fs').promises
 module.exports = async (ctx) => {
   if(ctx.updateType === 'callback_query') {
     await ctx.answerCbQuery()
+
     ctx.user.state = `admin_addSubscription`
+
     return ctx.editMessageText(`Для добавления канала/чата на обязательную подписку введите id/@username и ссылку (и код языка если нужно) через пробел\nПример: 
 <code>-1001488198124 https://t.me/+WLQZ7FtUjj65e93L</code>
 <code>-1001488198124 https://t.me/+WLQZ7FtUjj65e93L ru</code>
@@ -40,7 +42,7 @@ module.exports = async (ctx) => {
       else config.subsChannels.splice(find, 1)
     }
     
-    await fs.writeFile('config.json', JSON.stringify(config))
+    await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
 
     return ctx.replyWithHTML(`Список каналов/чатов на обязательную подписку обновлен.\n
 Текущий список: ${config.subsChannels.map(e => `<a href='${e.link}'>${e.title}</a> ${e.lang} (<code>${e.id}</code>)`).join(", ")}`, { 

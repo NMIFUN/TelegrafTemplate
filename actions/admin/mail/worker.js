@@ -31,6 +31,7 @@ function r(){}
   
   let promises = []
   let died = []
+  let alive = []
 
   for (let i = 0; i < users.length; i++) {
     const user = users[i]
@@ -40,7 +41,11 @@ function r(){}
         inline_keyboard: mail.keyboard
       }, 
       disable_web_page_preview: !mail.preview 
-    }).then((r) => { mail.success++ }).catch(async (e) => {
+    }).then((r) => { 
+      mail.success++
+
+      alive.push(user.id)
+    }).catch(async (e) => {
 			(Number.isInteger(mail.errorsCount[e.description])) ? mail.errorsCount[e.description] ++ : mail.errorsCount[e.description] = 1
 
       if(e.description.startsWith('Too Many Requests:')) {
@@ -48,6 +53,7 @@ function r(){}
         i--
       } else {
         mail.unsuccess++
+
         died.push(user.id)
       }
 		}))
@@ -68,12 +74,16 @@ function r(){}
       await User.updateMany({ id: { $in: died } }, { alive: false })
       died = []
 
+      await User.updateMany({ id: { $in: alive } }, { alive: true })
+      alive = []
+
       if(mailUpd.status === 'paused' || mailUpd.status === 'stopped') return parentPort.postMessage('stop')
     }
   }
 
   await Promise.all(promises)
   await User.updateMany({ id: { $in: died } }, { alive: false })
+  await User.updateMany({ id: { $in: alive } }, { alive: true })
 
   await Mail.findByIdAndUpdate(workerData, { 
     endDate: Date.now(),
