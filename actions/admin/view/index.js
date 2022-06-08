@@ -13,7 +13,7 @@ module.exports = async (ctx) => {
   let a
 
   if(!ctx.state[0]) a = 0
-  else if(isNaN(ctx.state[0])) a = (await ctx.View.countDocuments({ _id: { $lte: ObjectId(ctx.state[0]) }})) - 1
+  else if(isNaN(ctx.state[0])) a = (await ctx.View.countDocuments({ _id: { $gte: ObjectId(ctx.state[0]) }})) - 1
   else a = Number(ctx.state[0])
 
   if(a<0) return ctx.answerCbQuery('Нельзя', true)
@@ -34,7 +34,7 @@ module.exports = async (ctx) => {
   })
   else {
     await ctx.deleteMessage()
-    let result = await ctx.View.findOne().skip(a)
+    let result = await ctx.View.findOne().skip(a).sort({ _id: -1 })
 
     if(ctx.state[1]) {
       const index = Object.keys(statuses).indexOf(result.status) + 1
@@ -104,6 +104,9 @@ module.exports = async (ctx) => {
 
     delete result.message.chat
     
-    return ctx.telegram.sendCopy(ctx.from.id, result.message, { reply_markup: Markup.inlineKeyboard(keyboard) })
+    return ctx.telegram.sendCopy(ctx.from.id, result.message, { 
+      reply_markup: Markup.inlineKeyboard(keyboard),
+      disable_web_page_preview: !result.preview
+    })
   }
 }

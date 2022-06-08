@@ -40,7 +40,7 @@ function r(){}
       reply_markup: {
         inline_keyboard: mail.keyboard
       }, 
-      disable_web_page_preview: !mail.preview 
+      disable_web_page_preview: !mail.preview
     }).then((r) => { 
       mail.success++
 

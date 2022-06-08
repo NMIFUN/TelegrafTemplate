@@ -15,8 +15,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "pm2 start start.config.js",
-    "restart": "pm2 restart start.config.js"
+    "start": "pm2 start pm2.config.js",
+    "restart": "pm2 restart pm2.config.js"
   },
   "repository": {
     "type": "git",

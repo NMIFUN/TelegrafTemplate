@@ -8,12 +8,13 @@ const allowedUpdates = ['message','inline_query','callback_query','my_chat_membe
 const bot = new Telegraf(process.env.BOT_TOKEN, { handlerTimeout: 1 })
 
 bot.catch(async (err, ctx) => {
-  if(err.code === 400){
+  if(err.code === 400 || err.code === 403){
     if(err.description && 
       [
         'Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message',
         'Bad Request: message to delete not found',
-        'Forbidden: bot was blocked by the user'
+        'Forbidden: bot was blocked by the user',
+        "Bad Request: message can't be deleted for everyone"
       ].includes(err.description)) return
     }
   await ctx.telegram.sendMessage(305544740, `ERROR in ${ctx.updateType} | ${ctx?.from?.id || 'empty'} | ${ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'empty'} ${ctx?.user?.state || 'not state'}\n\n${err.name}\n${err.stack}\n${err.on && JSON.stringify(err.on, null, ' ') || 'empty'}`)

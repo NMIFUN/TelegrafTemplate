@@ -27,7 +27,7 @@ module.exports = async (ctx) => {
   let a
 
   if(!ctx.state[0]) a = 0
-  else if(isNaN(ctx.state[0])) a = (await ctx.Mail.countDocuments({ _id: { $lte: ObjectId(ctx.state[0]) }})) - 1
+  else if(isNaN(ctx.state[0])) a = (await ctx.Mail.countDocuments({ _id: { $gte: ObjectId(ctx.state[0]) }})) - 1
   else a = Number(ctx.state[0])
 
   if(a<0) return ctx.answerCbQuery('Нельзя', true)
@@ -48,7 +48,7 @@ module.exports = async (ctx) => {
   })
   else {
     await ctx.deleteMessage().catch(()=>{})
-    const result = await ctx.Mail.findOne().skip(a)
+    const result = await ctx.Mail.findOne().skip(a).sort({ _id: -1 })
 
     let extraKeyboard = [
       [ 
@@ -137,10 +137,12 @@ ${ctx.from.id === 305544740 ? `⚠️ Ошибки: ${Object.entries(result.erro
 ${(result.status === 'doing') ? `⌚️ Окончание через ≈${Math.round((time - new Date()) / (1000 * 60))} мин.` : 
 result.status !== 'notStarted' ? `🕰 Длительность ${Math.round(((result.endDate ? new Date(result.endDate) : new Date()) - new Date(result.startDate)) / (1000 * 60))} мин.` : ''}
 `}`
-  //
     delete result.message.chat
 
-    if(result.status === 'notStarted') return ctx.telegram.sendCopy(ctx.from.id, result.message, { reply_markup: Markup.inlineKeyboard(keyboard) })
+    if(result.status === 'notStarted') return ctx.telegram.sendCopy(ctx.from.id, result.message, { 
+      reply_markup: Markup.inlineKeyboard(keyboard),
+      disable_web_page_preview: !result.preview
+    })
     else return ctx.replyWithHTML(text, { reply_markup: Markup.inlineKeyboard(keyboard) })
   }
 }
