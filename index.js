@@ -37,7 +37,10 @@ const limitConfig = {
 }
 bot.use(rateLimit(limitConfig))
 
+bot.on('my_chat_member', require('./actions/myChatMember'))
+
 bot.use(require('./middlewares/attachUser'))
+
 const convertChars = require('./helpers/convertChars')
 
 bot.use(async (ctx, next) => {
@@ -68,8 +71,6 @@ bot.on('message', require('./routers/message'))
 bot.on('callback_query', require('./routers/callbackQuery'))
 
 bot.on('inline_query', require('./routers/inlineQuery'))
-
-bot.on('my_chat_member', require('./actions/myChatMember'))
 
 bot.launch(
   (process.env.USE_WEBHOOK==='true') ? {

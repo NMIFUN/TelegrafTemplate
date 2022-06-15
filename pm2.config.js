@@ -5,6 +5,6 @@ module.exports = {
     name: process.env.BOT_USERNAME,
     script: "index.js",
     watch: true,
-    ignore_watch: ["node_modules", "config.js", "logs"]
+    ignore_watch: ["config.json", "logs"]
   }]
 }
