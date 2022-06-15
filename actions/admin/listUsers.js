@@ -1,8 +1,7 @@
 const User = require('../../models/user')
 const Markup = require('telegraf/markup')
 var exportTemplate = {
-  _id: '', id: '', name: '', username: '', createdAt: '', ban: '', langCode: '', alive: '', from: '', lastMessage: '', age: '', sex: ''
-}
+  _id: '', id: '', name: '', username: '', createdAt: '', ban: '', langCode: '', alive: '', from: '', lastMessage: ''}
 
 module.exports = async (ctx) => {
   if(ctx.state[0]) {

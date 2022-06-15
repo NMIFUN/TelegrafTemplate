@@ -92,7 +92,7 @@ bot.launch(
 bot.telegram.getWebhookInfo().then( (webhookInfo) => { console.log(`✅ Bot is up and running\n${JSON.stringify(webhookInfo, null, ' ')}`) })
 bot.telegram.getMe().then( (info) => console.log(info) )
 
-const updateAlive = require('./helpers/updateAlive')
+const updateStat = require('./helpers/updateStat')
 const botStat = require('./helpers/botStat')
 
 const schedule = require('node-schedule')
@@ -111,7 +111,7 @@ const startMail = schedule.scheduleJob('0 * * * * *', async () => {
 })
 
 const checkAlive = schedule.scheduleJob('0 0 0 * * */2', async () => {
-  await updateAlive(bot)
+  await updateStat(bot)
 
   await botStat()
 })
