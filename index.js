@@ -38,6 +38,7 @@ const limitConfig = {
 bot.use(rateLimit(limitConfig))
 
 bot.on('my_chat_member', require('./actions/myChatMember'))
+bot.on('chat_join_request', require('./actions/chatJoin'))
 
 bot.use(require('./middlewares/attachUser'))
 

@@ -14,7 +14,8 @@ module.exports = async (ctx) => {
 
   const keyboard = Markup.inlineKeyboard([
     [
-      Markup.callbackButton(`Статистика`, `admin_stat`)
+      Markup.callbackButton(`Статистика`, `admin_stat`),
+      Markup.callbackButton(`Админы`, `admin_addAdmin`)
     ],
     [
       Markup.callbackButton(`Рассылка`, `admin_mail`),
@@ -25,7 +26,7 @@ module.exports = async (ctx) => {
       Markup.callbackButton(`Список пользователей`, `admin_listUsers`)
     ],
     [
-      Markup.callbackButton(`Админы`, `admin_addAdmin`),
+      Markup.callbackButton(`Принятие заявок`, `admin_addSubscription`),
       Markup.callbackButton(`Обязательная подписка`, `admin_addSubscription`)
     ],
     [

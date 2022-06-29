@@ -14,7 +14,7 @@ module.exports = async (ctx) => {
     await User.countDocuments({ alive: true }),
 
     await User.countDocuments({ lastMessage: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }, alive: true }),
-    
+    1
     await User.countDocuments({ createdAt: { $gte: today } }),
     await User.countDocuments({ createdAt: { $gte: today }, alive: true }),
 
