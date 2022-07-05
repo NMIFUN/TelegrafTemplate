@@ -10,3 +10,5 @@ subscribe:
   keys:
     check: Check
   success: You have subscribed to channels/groups and can now use the bot.
+joinRequest:
+  text: The bot approved your request

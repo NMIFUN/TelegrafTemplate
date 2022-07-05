@@ -6,19 +6,21 @@ module.exports = async (ctx) => {
   if(ctx.updateType === 'callback_query') {
     await ctx.answerCbQuery()
 
-    ctx.user.state = `admin_addSubscription`
+    ctx.user.state = `admin_addJoin`
 
     return ctx.editMessageText(`Для добавления канала/чата на принятие заявок введите id/@username\nПример: 
 <code>-1001488198124</code>
 
-Для удаления канала/чата из обязательной подписки введите его id\n
-Текущий список каналов/чатов на принятие заявок: ${config.joinChannels.map(e => `${e.title} (<code>${e.id}</code>)`).join(", ")}`, { 
+Для удаления канала/чата из принятия заявок введите его id\n
+Текущий список каналов/чатов на принятие заявок: ${config.joinChannels?.map(e => `${e.title} (<code>${e.id}</code>)`).join(", ") || ''}`, { 
       ...admin.backKeyboard,
       parse_mode: "HTML",
       disable_web_page_preview: true
     })
   }else{
     const list = ctx.message.text.split(' ')
+
+    if(!config.joinChannels?.length) config.joinChannels = []
 
     let find = config.joinChannels.findIndex(o => o.id == list[0])
     if(find !== -1) config.joinChannels.splice(find, 1)
@@ -36,7 +38,6 @@ module.exports = async (ctx) => {
       })
       else config.joinChannels.splice(find, 1)
     }
-    
     await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
 
     return ctx.replyWithHTML(`Список каналов/чатов на принятие заявок обновлен.\n

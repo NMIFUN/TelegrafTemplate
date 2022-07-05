@@ -43,6 +43,7 @@ const stateRouter = new Router(async (ctx) => {
 
 adminRouter.on('addAdmin', require('../actions/admin/addAdmin'))
 adminRouter.on('addSubscription', require('../actions/admin/addSubscription'))
+adminRouter.on('addJoin', require('../actions/admin/addJoin'))
 adminRouter.on('ban', require('../actions/admin/ban'))
 
 const adminViewRouter = new Router(async (ctx) => {
