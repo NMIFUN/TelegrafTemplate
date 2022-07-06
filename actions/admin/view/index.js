@@ -58,8 +58,8 @@ module.exports = async (ctx) => {
 
     if(result.status === 'notStarted') extraKeyboard = extraKeyboard.concat([
       [ 
-        Markup.callbackButton(`🔘 Кнопки ${result.keyboard.length ? '✅' : '❌'}`, `admin_mail_keyboard_${result._id}`),
-        Markup.callbackButton(`🧹`, `admin_mail_keyboard_${result._id}_del`),
+        Markup.callbackButton(`🔘 Кнопки ${result.keyboard.length ? '✅' : '❌'}`, `admin_view_keyboard_${result._id}`),
+        Markup.callbackButton(`🧹`, `admin_view_keyboard_${result._id}_del`),
       ],
       [  
         Markup.callbackButton(`🕓 Начало ${result.startDate ? new Date(result.startDate).toLocaleString('ru', dateConfig) : '❌'}`, `admin_view_startDate_${result._id}`),
