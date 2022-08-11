@@ -29,6 +29,9 @@ module.exports = async (ctx) => {
       Markup.callbackButton(`Принятие заявок`, `admin_addJoin`),
       Markup.callbackButton(`Обязательная подписка`, `admin_addSubscription`)
     ],
+    [      
+      Markup.callbackButton(`Обязательная подписка бот`, `admin_addBotSubscription`)
+    ]
     [
       Markup.callbackButton(`BotStat.io ${config.botStat ? '✅' : '❌'}`, `admin_botStat`),
       Markup.callbackButton(`(Раз)бан пользователя`, `admin_ban`)

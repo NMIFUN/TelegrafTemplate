@@ -3,17 +3,26 @@ const Markup = require('telegraf/markup')
 const asyncFilter = async (arr, predicate) => Promise.all(arr.map(predicate))
 	.then((results) => arr.filter((_v, index) => results[index]));
 const start = require('../actions/start')
+const { Telegraf } = require('telegraf')
 
 module.exports = async (ctx, next) => {
-  if (config.admins.includes(ctx.from.id)) return next()
+  if (config.admins.includes(ctx.from.id) || ctx?.chat?.type !== 'private') return next()
 
-  const channels = config.subsChannels.filter(channel => [undefined, ctx.user.lang, 'all'].includes(channel.lang))
-  const notSubscribed = await asyncFilter(channels, async channel => {
+  const channels = config.subsChannels?.filter(channel => [undefined, ctx.user?.lang, 'all'].includes(channel.lang))
+  let notSubscribed = await asyncFilter(channels, async channel => {
     const check = await ctx.telegram.getChatMember(channel.id, ctx.from.id).catch(() => {}) || {}
 
     if(['left', 'kicked'].includes(check.status)) return true
     else false
   })
+
+  const bots = config.subsBots?.filter(channel => [undefined, ctx.user?.lang, 'all'].includes(channel.lang))
+  notSubscribed = notSubscribed.concat(await asyncFilter(bots, async bot => {
+    const connectedBot = new Telegraf(bot.token)
+    const check = await connectedBot.telegram.sendChatAction(ctx.from.id, 'typing').catch(() => {}) || false
+
+    return !check
+  }))
 
   if(notSubscribed.length) {
     if(ctx.callbackQuery) await ctx.answerCbQuery(ctx.i18n.t('subscribe.notif'))
@@ -25,7 +34,7 @@ module.exports = async (ctx, next) => {
       reply_markup: Markup.inlineKeyboard([
         ...notSubscribed.map(channel => {
           count++
-          return Markup.urlButton(`${ctx.i18n.t('subscribe.channel')} №${count}`, channel.link)
+          return Markup.urlButton(`${ctx.i18n.t(`subscribe.${channel.token ? 'bot' : 'channel'}`)} №${count}`, channel.link)
         }),
         Markup.callbackButton(ctx.i18n.t('subscribe.key.check'), `subscription`)
       ], { columns: 1 }),
