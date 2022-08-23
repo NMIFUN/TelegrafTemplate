@@ -2,8 +2,7 @@ const User = require('../models/user')
 const config = require('../config')
 const axios = require('axios')
 const FormData = require('form-data')
-const { Readable } = require('stream')
-const fs = require('fs')
+
 
 module.exports = async () => {
   if(!config.botStat) return

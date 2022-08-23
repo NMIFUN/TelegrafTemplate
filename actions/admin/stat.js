@@ -10,22 +10,22 @@ module.exports = async (ctx) => {
   const month = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30, 0, 0, 0, 0)
 
   const promises = [
-    await User.countDocuments(),
-    await User.countDocuments({ alive: true }),
+    User.countDocuments(),
+    User.countDocuments({ alive: true }),
 
-    await User.countDocuments({ lastMessage: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }, alive: true }),
+    User.countDocuments({ lastMessage: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }, alive: true }),
     
-    await User.countDocuments({ createdAt: { $gte: today } }),
-    await User.countDocuments({ createdAt: { $gte: today }, alive: true }),
+    User.countDocuments({ createdAt: { $gte: today } }),
+    User.countDocuments({ createdAt: { $gte: today }, alive: true }),
 
-    await User.countDocuments({ createdAt: { $gte: yesterday, $lte: today } }),
-    await User.countDocuments({ createdAt: { $gte: yesterday, $lte: today }, alive: true }),
+    User.countDocuments({ createdAt: { $gte: yesterday, $lte: today } }),
+    User.countDocuments({ createdAt: { $gte: yesterday, $lte: today }, alive: true }),
 
-    await User.countDocuments({ createdAt: { $gte: month } }),
-    await User.countDocuments({ createdAt: { $gte: month }, alive: true }),
+    User.countDocuments({ createdAt: { $gte: month } }),
+    User.countDocuments({ createdAt: { $gte: month }, alive: true }),
 
-    await User.countDocuments({ lang: 'ru', alive: true }),
-    await User.countDocuments({ lang: 'en', alive: true })
+    User.countDocuments({ lang: 'ru', alive: true }),
+    User.countDocuments({ lang: 'en', alive: true })
   ]
 
   const [ 

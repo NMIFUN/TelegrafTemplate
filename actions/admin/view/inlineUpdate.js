@@ -14,7 +14,7 @@ module.exports = async ctx => {
   await ctx.answerCbQuery()
   const view = await View.findById(ctx.state[0])
 
-  const result = `${statuses[mail.status]}
+  const result = `${statuses[view.status]}
 
 👁 Просмотров ${view.views}
   

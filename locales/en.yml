@@ -6,6 +6,7 @@ languageSet: Language set
 subscribe:
   notif: You are not subscribed!
   channel: Channel
+  bot: Bot
   text: You must subscribe to channels/groups to use the bot.
   keys:
     check: Check
