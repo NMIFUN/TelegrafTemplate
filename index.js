@@ -3,7 +3,7 @@ require("dotenv").config({ path: `${__dirname}/.env` })
 const mongoose = require("./models")
 
 const { Telegraf } = require('telegraf')
-const allowedUpdates = ['message','inline_query','callback_query','my_chat_member']
+const allowedUpdates = ['message','inline_query','callback_query','my_chat_member','chat_join_request']
 
 const bot = new Telegraf(process.env.BOT_TOKEN, { handlerTimeout: 1 })
 
@@ -37,8 +37,8 @@ const limitConfig = {
 }
 bot.use(rateLimit(limitConfig))
 
-bot.on('my_chat_member', require('./actions/myChatMember'))
 bot.on('chat_join_request', require('./actions/chatJoin'))
+bot.on('my_chat_member', require('./actions/myChatMember'))
 
 bot.use(require('./middlewares/attachUser'))
 

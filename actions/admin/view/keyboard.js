@@ -19,6 +19,7 @@ module.exports = async (ctx) => {
 
 Кнопка 1 - http://example1.com
 
+<i>с двух сторон от - должны быть пробелы</i>
 Используйте разделитель "|", чтобы добавить кнопки в один ряд:
 
 Кнопка 1 - http://example1.com | Кнопка 2 - http://example2.com
@@ -36,14 +37,19 @@ module.exports = async (ctx) => {
         const tempArr = []
         const splitWand = i.split('|')
         for (const y of splitWand) {
-          const splitDash = y.split('-')
-          tempArr.push({ text: splitDash[0].trim(), url: splitDash.slice(1).join('-').trim() })
+          const splitDash = y.split(' - ')
+          
+          const key = { text: splitDash[0].trim(), url: splitDash.slice(1).join(' - ').trim() }
+          if(!key.text || !key.url) return ctx.reply(`Ошибка при построении клавиатуры`)
+
+          tempArr.push(key)
         }
         keyboard.push(tempArr)
       }
     } catch (error) {
-      return ctx.reply(`Ошибка при получении списка кнопок: ${error}`)
+      return ctx.reply(`Ошибка при построении клавиатуры`)
     }
+    if(!keyboard.length) return ctx.reply(`Ошибка при построении клавиатуры`)
 
     ctx.user.state = null
 
