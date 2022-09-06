@@ -56,7 +56,7 @@ MAU: ${mau}
 Вчера: +${forYesterday} (+${aliveForYesterday})
 Месяц: +${forMonth} (+${aliveForMonth}) 
 
-${langCodes.map(lang => `${lang._id?.toUpperCase()}: ${lang.count}`).join(', ')}`
+${langCodes.filter(lang => lang.count > langCodes[0].count / 100 * 1).map(lang => `${lang._id?.toUpperCase()}: ${lang.count}`).join(', ')}`
 
   return ctx.editMessageText(text, Markup.inlineKeyboard([
     [Markup.callbackButton(`Обновить`, `admin_stat`)],

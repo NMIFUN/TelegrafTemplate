@@ -99,6 +99,7 @@ const botStat = require('./helpers/botStat')
 
 const schedule = require('node-schedule')
 const Mail = require('./models/mail')
+const User = require('./models/user')
 const lauchWorker = require('./actions/admin/mail/lauchWorker')
 
 function r(){}
@@ -107,12 +108,12 @@ function r(){}
   if(result) lauchWorker(result._id)
 })()
 
-const startMail = schedule.scheduleJob('0 * * * * *', async () => {
+schedule.scheduleJob('* * * * *', async () => {
   const result = await Mail.findOne({ status: 'notStarted', startDate: { $exists: true, $lte: new Date() } })
   if(result) lauchWorker(result._id)
 })
 
-const checkAlive = schedule.scheduleJob('0 0 0 * * */2', async () => {
+schedule.scheduleJob('0 0 */2 * *', async () => {
   await updateStat(bot)
 
   await botStat()
