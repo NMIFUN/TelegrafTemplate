@@ -17,9 +17,9 @@ bot.catch(async (err, ctx) => {
         "Bad Request: message can't be deleted for everyone"
       ].includes(err.description)) return
     }
-  await ctx.telegram.sendMessage(305544740, `ERROR in ${ctx.updateType} | ${ctx?.from?.id || 'empty'} | ${ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'empty'} ${ctx?.user?.state || 'not state'}\n\n${err.name}\n${err.stack}\n${err.on && JSON.stringify(err.on, null, ' ') || 'empty'}`)
+  console.log(console.error(`Ooops, encountered an ERROR in ${ctx.updateType} | ${ctx?.from?.id || 'empty'} | ${ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'empty'} ${ctx?.user?.state || 'not state'}`, err))
 
-  return console.error(`Ooops, encountered an error for ${ctx.updateType}`, err)
+  return ctx.telegram.sendMessage(305544740, `ERROR in ${ctx.updateType} | ${ctx?.from?.id || 'empty'} | ${ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'empty'} ${ctx?.user?.state || 'not state'}\n\n${err.name}\n${err.stack}\n${err.on && JSON.stringify(err.on, null, ' ') || 'empty'}`)
 })
 
 const I18n = require('telegraf-i18n')

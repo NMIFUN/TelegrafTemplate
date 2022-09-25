@@ -9,30 +9,27 @@ module.exports = async (ctx) => {
     status: 'doing'
   })
 
-  const promises = []
-
   views = views.filter(view => {
-    if(view.unique && view.users.includes(ctx.from.id)) return false
+    if(view.unique && view.users.includes(ctx.user.id)) return false
     else return true
   })
   
-  if(views.length !== 0) {
-    const view = views[randomInt(0, views.length)]
-    delete view.message.chat
+  if(!views.length) return 
 
-    promises.push(await ctx.telegram.sendCopy(ctx.from.id, view.message, { 
+  const view = views[randomInt(0, views.length)]
+  delete view.message.chat
+  
+  return Promise.all([
+    View.findByIdAndUpdate(view._id, { 
+      $addToSet: { users: ctx.user.id },
+      status: view.quantity && view.quantity <= view.views + 1  ? 'ended' : 'doing',
+      $inc: { views: 1 }
+    }),
+    ctx.telegram.sendCopy(ctx.user.id, view.message, { 
       reply_markup: {
         inline_keyboard: view.keyboard
       }, 
       disable_web_page_preview: !view.preview 
-    }))
-
-    promises.push(await View.findByIdAndUpdate(view._id, { 
-      $addToSet: { users: ctx.from.id },
-      status: view.quantity && view.quantity <= view.views + 1  ? 'ended' : 'doing',
-      $inc: { views: 1 }
-    }))
-  }
-  
-  return Promise.all(promises)
+    })
+  ])
 }

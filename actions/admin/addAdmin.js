@@ -14,7 +14,7 @@ module.exports = async (ctx) => {
       parse_mode: "HTML"
     })
   }else{
-    const list = ctx.message.text.split(',')
+    const list = ctx.message.text.split(' ')
     for (let i of list) {
       i = Number(i.trim())
       
