@@ -13,11 +13,12 @@ module.exports = async (ctx) => {
   }else{
     const user = await User.findOne({ id: ctx.message.text })
     if(!user) return ctx.reply(`Пользователь с id ${ctx.message.text} не найден.`, admin.backKeyboard)
+    
     ctx.user.state = null
 
     user.ban = !user.ban
     await user.save()
 
-    return ctx.replyWithHTML(`Пользователь <a href='tg://user?id=${user.id}'>${user.name}</a> ${user.ban ? 'забанен' : 'разбанен'}.`, admin.backKeyboard)
+    return ctx.replyWithHTML(`Пользователь ${user.name} ${user.ban ? 'забанен' : 'разбанен'}.`, admin.backKeyboard)
   }
 }

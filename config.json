@@ -3,5 +3,9 @@
     305544740
   ],
   "subsChannels": [],
-  "botStat": false
+  "botStat": {
+    "send": false,
+    "alive": false,
+    "key": "u"
+  }
 }

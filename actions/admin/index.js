@@ -1,16 +1,10 @@
 const Markup = require('telegraf/markup')
 const config = require('../../config.json')
-const fs = require('fs').promises
 
 module.exports = async (ctx) => {
   if (!config.admins.includes(ctx.from.id)) return
 
-  const text = `Админ панель`
-  
-  if(ctx.callbackQuery && ctx.callbackQuery.data.split('_')[1] === 'botStat') {
-    config.botStat = !config.botStat
-    await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
-  }
+  const text = `<b>Админ панель</b>\n\n<tg-spoiler><i>Developed by @NMI_FUN</i></tg-spoiler>`
 
   const keyboard = Markup.inlineKeyboard([
     [
@@ -26,7 +20,7 @@ module.exports = async (ctx) => {
       Markup.callbackButton(`Список пользователей`, `admin_listUsers`)
     ],
     [
-      Markup.callbackButton(`BotStat.io ${config.botStat ? '✅' : '❌'}`, `admin_botStat`),
+      Markup.callbackButton(`BotStat.io`, `admin_botStat`),
       Markup.callbackButton(`(Раз)бан пользователя`, `admin_ban`)
     ],
     [

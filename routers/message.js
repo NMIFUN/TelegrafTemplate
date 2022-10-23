@@ -46,6 +46,7 @@ adminRouter.on('addSubscription', require('../actions/admin/addSubscription'))
 adminRouter.on('addBotSubscription', require('../actions/admin/addBotSubscription'))
 adminRouter.on('addJoin', require('../actions/admin/addJoin'))
 adminRouter.on('ban', require('../actions/admin/ban'))
+adminRouter.on('botStat', require('../actions/admin/botStat'))
 
 const adminViewRouter = new Router(async (ctx) => {
   const cmd = ctx.user.state.split('_')

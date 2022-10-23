@@ -113,7 +113,8 @@ schedule.scheduleJob('* * * * *', async () => {
   if(result) lauchWorker(result._id)
 })
 
-schedule.scheduleJob('0 0 */2 * *', async () => {
+const { randomInt } = require('crypto')
+schedule.scheduleJob(`0 0 */${randomInt(2, 6)} * *`, async () => {
   await updateStat(bot)
 
   await botStat()
