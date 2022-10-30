@@ -6,6 +6,7 @@ module.exports = async (bot) => {
   let promises = []
   let died = []
   let alive = []
+  let reportsCount = {}
 
   const usersCount = await User.countDocuments()
   for (let y = 0; y <= Math.ceil(usersCount / shift); y++) {
@@ -22,7 +23,7 @@ module.exports = async (bot) => {
       
       if(i !== 0 && i % 10 === 0) {
         const results = await Promise.all(promises)
-        console.log(results)
+
         const findIndex = results.findIndex(result => typeof result.result === 'string' && result.result.startsWith('Too Many Requests:'))
         const find = results[findIndex]
         if(find) {
@@ -30,17 +31,20 @@ module.exports = async (bot) => {
           i = find.i - 1
         } else {
           const success = results.filter(result => result.result).length
-          await sleep(success * 10)
+          await sleep(success * 8)
         }
 
         results.slice(0, find ? findIndex : results.length).forEach(result => {
+          (Number.isInteger(reportsCount[result.result])) ? reportsCount[result.result] ++ : reportsCount[result.result] = 1
+          
           if(result.result === true) alive.push(result.id)
           else died.push(result.id) 
         })
+
         promises = []
       }
   
-      if(i % 1000 === 0) {
+      if(i % 500 === 0) {
         await Promise.all([
           User.updateMany({ id: { $in: died } }, { alive: false }),
           User.updateMany({ id: { $in: alive } }, { alive: true })
@@ -51,7 +55,11 @@ module.exports = async (bot) => {
     }
   }
  
-  await Promise.all(promises)
-  await User.updateMany({ id: { $in: died } }, { alive: false })
-  await User.updateMany({ id: { $in: alive } }, { alive: true })
+  //console.log(Object.entries(reportsCount).map(([key, value]) => `${key} ${value}`))
+
+  await Promise.all([
+    ...promises,
+    User.updateMany({ id: { $in: died } }, { alive: false }),
+    User.updateMany({ id: { $in: alive } }, { alive: true })
+  ])
 }

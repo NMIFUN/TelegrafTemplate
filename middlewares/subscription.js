@@ -28,7 +28,7 @@ module.exports = async (ctx, next) => {
   if(notSubscribed.length) {
     if(ctx.callbackQuery) await ctx.answerCbQuery(ctx.i18n.t('subscribe.notif'))
 
-    return ctx[ctx.updateType === 'message' ? 'replyWithHTML' : 'editMessageText'](ctx.i18n.t('subscribe.text'), {
+    return ctx[ctx.message || !ctx.callbackQuery.message.text ? 'replyWithHTML' : 'editMessageText'](ctx.i18n.t('subscribe.text'), {
       parse_mode: 'HTML',
       reply_markup: Markup.inlineKeyboard([
         ...notSubscribed.map((channel, index) => {
@@ -40,7 +40,7 @@ module.exports = async (ctx, next) => {
     })
   }
 
-  if(ctx.updateType === 'callback_query') {
+  if(ctx.callbackQuery?.data === 'subscription') {
     await ctx.answerCbQuery()
     await ctx.editMessageText(ctx.i18n.t('subscribe.success'))
     
