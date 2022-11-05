@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "axios": "^0.27.2",
-    "dotenv": "^10.0.0",
+    "axios": "^1.1.3",
+    "dotenv": "^16.0.3",
     "js-yaml": "^4.1.0",
-    "mongoose": "^6.1.0",
+    "mongoose": "^6.7.1",
     "node-schedule": "^2.1.0",
     "telegraf": "github:NMIFUN/telegraf",
     "telegraf-i18n": "^6.6.0",
