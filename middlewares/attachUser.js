@@ -15,7 +15,7 @@ module.exports = async (ctx, next) => {
       from: ctx?.message?.text.split(' ')[1] || null,
       lastMessage: Date.now()
     })
-    await user.save()
+    await user.save().catch(() => {})
     ctx.freshUser = true
   }
   ctx.user = user
