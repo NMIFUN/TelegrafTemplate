@@ -22,10 +22,10 @@ module.exports = async (ctx) => {
     ])
 
     return ctx.editMessageText(`
-Всего переходов: ${result.count} 
+Всего переходов: ${result.count}
 Уникальных переходов: ${result.uniqueCount} (${Math.round(result.uniqueCount / result.count * 100)}%)
-Новых пользователей: ${result.newCount} (${Math.round(result.newCount / result.count * 100)}%)
-Живых пользователей: ${alive} (${Math.round(alive / result.count * 100)}%)
+Новых пользователей: ${result.newCount} (${Math.round(result.newCount / result.uniqueCount * 100)}%)
+Живых пользователей: ${alive} (${Math.round(alive / result.newCount * 100)}%)
 
 Последний переход: ${new Date(result.last).toLocaleString('ru', dateConfig)}
 
