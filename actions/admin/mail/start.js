@@ -2,20 +2,22 @@ const Markup = require('telegraf/markup')
 const lauchWorker = require('../mail/lauchWorker')
 
 module.exports = async (ctx) => {
-  await ctx.answerCbQuery()
-  await ctx.deleteMessage()
+    await ctx.answerCbQuery()
+    await ctx.deleteMessage()
 
-  try {
-    var mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], { status: 'doing' })
-  } catch (error) {
-    return ctx.reply(`Ошибка при сохранении: ${error}`)
-  }
-  lauchWorker(mail._id)
+    try {
+        var mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], {
+            status: 'doing',
+        })
+    } catch (error) {
+        return ctx.reply(`Ошибка при сохранении: ${error}`)
+    }
+    lauchWorker(mail._id)
 
-  return ctx.replyWithHTML(`Рассылка запущена`, { 
-    reply_markup: Markup.inlineKeyboard([
-      Markup.callbackButton(`Просмотр`, `admin_mail_id_${ctx.state[0]}`)
-    ]),
-    parse_mode: "HTML"
-  })
+    return ctx.replyWithHTML(`Рассылка запущена`, {
+        reply_markup: Markup.inlineKeyboard([
+            Markup.callbackButton(`Просмотр`, `admin_mail_id_${ctx.state[0]}`),
+        ]),
+        parse_mode: 'HTML',
+    })
 }

@@ -1,40 +1,53 @@
 const Markup = require('telegraf/markup')
 
 module.exports = async (ctx) => {
-  if(ctx.updateType === 'callback_query') {
-    await ctx.answerCbQuery()
-    await ctx.deleteMessage()
+    if (ctx.updateType === 'callback_query') {
+        await ctx.answerCbQuery()
+        await ctx.deleteMessage()
 
-    if(ctx.state[1]) {
-      const mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], { quantity: 0 })
-      return ctx.replyWithHTML(`Кол-во пользоваталей удалено`, { 
-        reply_markup: Markup.inlineKeyboard([
-          Markup.callbackButton(`Продолжить настройку`, `admin_mail_id_${mail._id}`)
-        ])
-      })
+        if (ctx.state[1]) {
+            const mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], {
+                quantity: 0,
+            })
+            return ctx.replyWithHTML(`Кол-во пользоваталей удалено`, {
+                reply_markup: Markup.inlineKeyboard([
+                    Markup.callbackButton(
+                        `Продолжить настройку`,
+                        `admin_mail_id_${mail._id}`
+                    ),
+                ]),
+            })
+        }
+
+        ctx.user.state = `admin_mail_quantity_${ctx.state[0]}`
+
+        return ctx.replyWithHTML(`Введите кол-во получателей`, {
+            reply_markup: Markup.inlineKeyboard([
+                Markup.callbackButton(
+                    `‹ Назад`,
+                    `admin_mail_id_${ctx.state[0]}`
+                ),
+            ]),
+            parse_mode: 'HTML',
+        })
+    } else {
+        try {
+            var mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], {
+                quantity: ctx.message.text,
+            })
+        } catch (error) {
+            return ctx.reply(`Ошибка при сохранении: ${error}`)
+        }
+
+        ctx.user.state = null
+
+        return ctx.replyWithHTML(`Кол-во получателей сохранено`, {
+            reply_markup: Markup.inlineKeyboard([
+                Markup.callbackButton(
+                    `Продолжить настройку`,
+                    `admin_mail_id_${mail._id}`
+                ),
+            ]),
+        })
     }
-
-    ctx.user.state = `admin_mail_quantity_${ctx.state[0]}`
-
-    return ctx.replyWithHTML(`Введите кол-во получателей`, { 
-      reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton(`Назад`, `admin_mail_id_${ctx.state[0]}`)
-      ]),
-      parse_mode: "HTML"
-    })
-  }else{
-    try {
-      var mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], { quantity: ctx.message.text })
-    } catch (error) {
-      return ctx.reply(`Ошибка при сохранении: ${error}`)
-    }
-
-    ctx.user.state = null
-
-    return ctx.replyWithHTML(`Кол-во получателей сохранено`, { 
-      reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton(`Продолжить настройку`, `admin_mail_id_${mail._id}`)
-      ])
-    })
-  }
 }
