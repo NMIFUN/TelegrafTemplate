@@ -1,15 +1,15 @@
 name: 🇬🇧 English
 start:
-    text: |
-        Hello
+  text: |
+    Hello
 languageSet: Language set
 subscribe:
-    notif: You are not subscribed!
-    channel: Channel
-    bot: Bot
-    text: You must subscribe to channels/groups to use the bot.
-    keys:
-        check: Check
-    success: You have subscribed to channels/groups and can now use the bot.
+  notif: You are not subscribed!
+  channel: Channel
+  bot: Bot
+  text: You must subscribe to channels/groups to use the bot.
+  keys:
+    check: Check
+  success: You have subscribed to channels/groups and can now use the bot.
 joinRequest:
-    text: The bot approved your request
+  text: The bot approved your request
