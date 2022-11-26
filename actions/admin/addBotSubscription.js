@@ -1,9 +1,9 @@
-const config = require('../../config.json')
-const admin = require('../../helpers/admin.js')
-const fs = require('fs').promises
+const config = require("../../config.json")
+const admin = require("../../helpers/admin.js")
+const fs = require("fs").promises
 
 module.exports = async (ctx) => {
-    if (ctx.updateType === 'callback_query') {
+    if (ctx.updateType === "callback_query") {
         await ctx.answerCbQuery()
 
         ctx.user.state = `admin_addBotSubscription`
@@ -19,19 +19,19 @@ module.exports = async (ctx) => {
                     (e) =>
                         `<a href='${e.link}'>${e.id}</a> ${e.lang} (<code>${e.id}</code>)`
                 )
-                .join(', ')}`,
+                .join(", ")}`,
             {
                 ...admin.backKeyboard,
-                parse_mode: 'HTML',
+                parse_mode: "HTML",
                 disable_web_page_preview: true,
             }
         )
     } else {
-        const list = ctx.message.text.split(' ')
+        const list = ctx.message.text.split(" ")
 
         if (!config.subsBots?.length) config.subsBots = []
 
-        const id = Number(list[0].split(':')[0])
+        const id = Number(list[0].split(":")[0])
         let find = config.subsBots.findIndex((o) => o.id === id)
         if (find !== -1) config.subsBots.splice(find, 1)
         else {
@@ -46,13 +46,13 @@ module.exports = async (ctx) => {
                 config.subsBots.push({
                     link: list[1],
                     id: id,
-                    lang: list[2] || 'all',
+                    lang: list[2] || "all",
                     token: list[0],
                 })
             else config.subsBots.splice(find, 1)
         }
 
-        await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
+        await fs.writeFile("config.json", JSON.stringify(config, null, "  "))
 
         return ctx.replyWithHTML(
             `Список ботов на обязательную подписку обновлен.\n
@@ -61,7 +61,7 @@ module.exports = async (ctx) => {
                     (e) =>
                         `<a href='${e.link}'>${e.id}</a> ${e.lang} (<code>${e.id}</code>)`
                 )
-                .join(', ')}`,
+                .join(", ")}`,
             {
                 ...admin.backKeyboard,
                 disable_web_page_preview: true,

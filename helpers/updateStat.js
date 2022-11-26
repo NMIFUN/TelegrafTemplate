@@ -1,4 +1,4 @@
-const User = require('../models/user')
+const User = require("../models/user")
 const sleep = (millis) => new Promise((resolve) => setTimeout(resolve, millis))
 const shift = 5000
 
@@ -19,7 +19,7 @@ module.exports = async (bot) => {
 
             promises.push(
                 bot.telegram
-                    .sendChatAction(user.id, 'typing')
+                    .sendChatAction(user.id, "typing")
                     .then(() => ({ id: user.id, i: i, result: true }))
                     .catch((e) => ({
                         id: user.id,
@@ -33,8 +33,8 @@ module.exports = async (bot) => {
 
                 const findIndex = results.findIndex(
                     (result) =>
-                        typeof result.result === 'string' &&
-                        result.result.startsWith('Too Many Requests:')
+                        typeof result.result === "string" &&
+                        result.result.startsWith("Too Many Requests:")
                 )
                 const find = results[findIndex]
                 if (find) {

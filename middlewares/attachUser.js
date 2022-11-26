@@ -1,8 +1,8 @@
-const User = require('../models/user')
-const convertChars = require('../helpers/convertChars')
+const User = require("../models/user")
+const convertChars = require("../helpers/convertChars")
 
 module.exports = async (ctx, next) => {
-    if (ctx?.chat?.type !== 'private' && !ctx.inlineQuery && !ctx.callbackQuery)
+    if (ctx?.chat?.type !== "private" && !ctx.inlineQuery && !ctx.callbackQuery)
         return
 
     let user = await User.findOne({ id: ctx.from.id })
@@ -13,7 +13,7 @@ module.exports = async (ctx, next) => {
             username: ctx.from.username,
             langCode: ctx.from.language_code,
             alive: true,
-            from: ctx?.message?.text.split(' ')[1] || null,
+            from: ctx?.message?.text.split(" ")[1] || null,
             lastMessage: Date.now(),
         })
         await user.save().catch(() => {})

@@ -1,12 +1,12 @@
-const Markup = require('telegraf/markup')
-const View = require('../../../models/view')
+const Markup = require("telegraf/markup")
+const View = require("../../../models/view")
 
 const dateConfig = {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
 }
 const statuses = {
     notStarted: `🛠 Просмотры еще не начаты`,
@@ -26,20 +26,20 @@ module.exports = async (ctx) => {
   
 🕓 Начало ${
         view.startDate
-            ? new Date(view.startDate).toLocaleString('ru', dateConfig)
-            : '❌'
+            ? new Date(view.startDate).toLocaleString("ru", dateConfig)
+            : "❌"
     }
 🕤 Окончание ${
         view.endDate
-            ? new Date(view.endDate).toLocaleString('ru', dateConfig)
-            : '❌'
+            ? new Date(view.endDate).toLocaleString("ru", dateConfig)
+            : "❌"
     }
-🫂 Макс кол-во ${view.quantity === 0 ? '♾️' : view.quantity}
-🏳️ Язык ${result.lang === null ? 'все' : result.lang}
-✉️ Уникальные ${view.unique ? '✅' : '❌'}`
+🫂 Макс кол-во ${view.quantity === 0 ? "♾️" : view.quantity}
+🏳️ Язык ${result.lang === null ? "все" : result.lang}
+✉️ Уникальные ${view.unique ? "✅" : "❌"}`
 
     return ctx.editMessageText(result, {
-        parse_mode: 'HTML',
+        parse_mode: "HTML",
         reply_markup: Markup.inlineKeyboard([
             Markup.callbackButton(`🔄`, `inlineUpdateView_${view._id}`),
         ]),

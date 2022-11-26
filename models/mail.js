@@ -1,10 +1,10 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose")
 
 let Mail = mongoose.Schema({
     uid: Number,
     message: Object,
     keyboard: { type: Array, default: [] },
-    status: { type: String, default: '' },
+    status: { type: String, default: "" },
     quantity: { type: Number, default: 0 },
     lang: { type: String, default: null },
     preview: { type: Boolean, default: true },
@@ -15,6 +15,6 @@ let Mail = mongoose.Schema({
     endDate: Date,
     errorsCount: { type: Object, default: {} },
 })
-Mail = mongoose.model('Mail', Mail)
+Mail = mongoose.model("Mail", Mail)
 
 module.exports = Mail

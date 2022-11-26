@@ -1,5 +1,5 @@
-const User = require('../../models/user')
-const Markup = require('telegraf/markup')
+const User = require("../../models/user")
+const Markup = require("telegraf/markup")
 
 module.exports = async (ctx) => {
     await ctx.answerCbQuery()
@@ -64,7 +64,7 @@ module.exports = async (ctx) => {
 
         User.aggregate([
             { $match: { alive: true } },
-            { $group: { _id: '$langCode', count: { $sum: 1 } } },
+            { $group: { _id: "$langCode", count: { $sum: 1 } } },
             { $sort: { count: -1 } },
         ]),
     ]
@@ -98,13 +98,13 @@ MAU: ${mau}
 ${langCodes
     .filter((lang) => lang.count > (langCodes[0].count / 100) * 1)
     .map((lang) => `${lang._id?.toUpperCase()}: ${lang.count}`)
-    .join(', ')}`
+    .join(", ")}`
 
     return ctx.editMessageText(
         text,
         Markup.inlineKeyboard([
             [Markup.callbackButton(`Обновить`, `admin_stat`)],
             [Markup.callbackButton(`‹ Назад`, `admin_back`)],
-        ]).extra({ parse_mode: 'HTML' })
+        ]).extra({ parse_mode: "HTML" })
     )
 }

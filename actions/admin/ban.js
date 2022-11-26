@@ -1,8 +1,8 @@
-const admin = require('../../helpers/admin.js')
-const User = require('../../models/user.js')
+const admin = require("../../helpers/admin.js")
+const User = require("../../models/user.js")
 
 module.exports = async (ctx) => {
-    if (ctx.updateType === 'callback_query') {
+    if (ctx.updateType === "callback_query") {
         await ctx.answerCbQuery()
 
         ctx.user.state = `admin_ban`
@@ -10,7 +10,7 @@ module.exports = async (ctx) => {
             `Для добавления/удаления в/из бан(а) введите его id.`,
             {
                 ...admin.backKeyboard,
-                parse_mode: 'HTML',
+                parse_mode: "HTML",
             }
         )
     } else {
@@ -27,7 +27,7 @@ module.exports = async (ctx) => {
         await user.save()
 
         return ctx.replyWithHTML(
-            `Пользователь ${user.name} ${user.ban ? 'забанен' : 'разбанен'}.`,
+            `Пользователь ${user.name} ${user.ban ? "забанен" : "разбанен"}.`,
             admin.backKeyboard
         )
     }

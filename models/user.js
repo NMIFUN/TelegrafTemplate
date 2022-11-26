@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose")
 
 let User = mongoose.Schema(
     {
@@ -28,6 +28,6 @@ let User = mongoose.Schema(
         timestamps: true,
     }
 )
-User = mongoose.model('User', User)
+User = mongoose.model("User", User)
 
 module.exports = User

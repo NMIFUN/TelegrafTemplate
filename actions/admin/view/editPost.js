@@ -1,7 +1,7 @@
-const Markup = require('telegraf/markup')
+const Markup = require("telegraf/markup")
 
 module.exports = async (ctx) => {
-    if (ctx.updateType === 'callback_query') {
+    if (ctx.updateType === "callback_query") {
         await ctx.answerCbQuery()
         ctx.user.state = `admin_view_editPost_${ctx.state[0]}`
         await ctx.deleteMessage()
@@ -13,7 +13,7 @@ module.exports = async (ctx) => {
                     `admin_view_id_${ctx.state[0]}`
                 ),
             ]),
-            parse_mode: 'HTML',
+            parse_mode: "HTML",
         })
     } else {
         const view = await ctx.View.findByIdAndUpdate(ctx.state[0], {

@@ -1,12 +1,12 @@
-const Markup = require('telegraf/markup')
+const Markup = require("telegraf/markup")
 const dateConfig = {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
 }
-const { ObjectId } = require('mongodb')
+const { ObjectId } = require("mongodb")
 const statuses = {
     notStarted: `🛠 Просмотры еще не начаты`,
     doing: `🕒 Просмотры выполняются`,
@@ -26,10 +26,10 @@ module.exports = async (ctx) => {
             })) - 1
     else a = Number(ctx.state[0])
 
-    if (a < 0) return ctx.answerCbQuery('Нельзя', true)
+    if (a < 0) return ctx.answerCbQuery("Нельзя", true)
 
     const count = await ctx.View.countDocuments()
-    if (a !== 0 && a + 1 > count) return ctx.answerCbQuery('Нельзя', true)
+    if (a !== 0 && a + 1 > count) return ctx.answerCbQuery("Нельзя", true)
 
     await ctx.answerCbQuery()
 
@@ -41,7 +41,7 @@ module.exports = async (ctx) => {
                 [Markup.callbackButton(`Добавить`, `admin_view_add`)],
                 [Markup.callbackButton(`‹ Назад`, `admin_back`)],
             ]),
-            parse_mode: 'HTML',
+            parse_mode: "HTML",
         })
     else {
         await ctx.deleteMessage()
@@ -76,11 +76,11 @@ module.exports = async (ctx) => {
             ],
         ]
 
-        if (result.status === 'notStarted')
+        if (result.status === "notStarted")
             extraKeyboard = extraKeyboard.concat([
                 [
                     Markup.callbackButton(
-                        `🔘 Кнопки ${result.keyboard.length ? '✅' : '❌'}`,
+                        `🔘 Кнопки ${result.keyboard.length ? "✅" : "❌"}`,
                         `admin_view_keyboard_${result._id}`
                     ),
                     Markup.callbackButton(
@@ -93,10 +93,10 @@ module.exports = async (ctx) => {
                         `🕓 Начало ${
                             result.startDate
                                 ? new Date(result.startDate).toLocaleString(
-                                      'ru',
+                                      "ru",
                                       dateConfig
                                   )
-                                : '❌'
+                                : "❌"
                         }`,
                         `admin_view_startDate_${result._id}`
                     ),
@@ -110,10 +110,10 @@ module.exports = async (ctx) => {
                         `🕤 Окончание ${
                             result.endDate
                                 ? new Date(result.endDate).toLocaleString(
-                                      'ru',
+                                      "ru",
                                       dateConfig
                                   )
-                                : '❌'
+                                : "❌"
                         }`,
                         `admin_view_endDate_${result._id}_end`
                     ),
@@ -125,7 +125,7 @@ module.exports = async (ctx) => {
                 [
                     Markup.callbackButton(
                         `🫂 Макс кол-во ${
-                            result.quantity === 0 ? '♾️' : result.quantity
+                            result.quantity === 0 ? "♾️" : result.quantity
                         }`,
                         `admin_view_quantity_${result._id}`
                     ),
@@ -136,7 +136,7 @@ module.exports = async (ctx) => {
                 ],
                 [
                     Markup.callbackButton(
-                        `🏳️ Язык ${result.lang === null ? 'все' : result.lang}`,
+                        `🏳️ Язык ${result.lang === null ? "все" : result.lang}`,
                         `admin_view_lang_${result._id}`
                     ),
                     Markup.callbackButton(
@@ -146,11 +146,11 @@ module.exports = async (ctx) => {
                 ],
                 [
                     Markup.callbackButton(
-                        `🌐 Превью ${result.preview ? '✅' : '❌'}`,
+                        `🌐 Превью ${result.preview ? "✅" : "❌"}`,
                         `admin_view_preview_${result._id}`
                     ),
                     Markup.callbackButton(
-                        `✉️ Уникальные ${result.unique ? '✅' : '❌'}`,
+                        `✉️ Уникальные ${result.unique ? "✅" : "❌"}`,
                         `admin_view_unique_${result._id}`
                     ),
                     Markup.callbackButton(
@@ -160,7 +160,7 @@ module.exports = async (ctx) => {
                 ],
             ])
 
-        if (['doing', 'ended'].includes(result.status))
+        if (["doing", "ended"].includes(result.status))
             extraKeyboard = extraKeyboard.concat([
                 [
                     Markup.callbackButton(

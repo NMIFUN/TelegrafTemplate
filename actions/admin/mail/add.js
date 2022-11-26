@@ -1,7 +1,7 @@
-const Markup = require('telegraf/markup')
+const Markup = require("telegraf/markup")
 
 module.exports = async (ctx) => {
-    if (ctx.updateType === 'callback_query') {
+    if (ctx.updateType === "callback_query") {
         await ctx.answerCbQuery()
         await ctx.deleteMessage()
 
@@ -10,14 +10,14 @@ module.exports = async (ctx) => {
             reply_markup: Markup.inlineKeyboard([
                 Markup.callbackButton(`‹ Назад`, `admin_mail`),
             ]),
-            parse_mode: 'HTML',
+            parse_mode: "HTML",
         })
     } else {
         const mail = ctx.Mail({
             uid: ctx.from.id,
             message: ctx.message,
             keyboard: ctx.message?.reply_markup?.inline_keyboard,
-            status: 'notStarted',
+            status: "notStarted",
         })
         await mail.save()
         ctx.user.state = null

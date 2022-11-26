@@ -1,7 +1,7 @@
-const Markup = require('telegraf/markup')
+const Markup = require("telegraf/markup")
 
 module.exports = async (ctx) => {
-    if (ctx.updateType === 'callback_query') {
+    if (ctx.updateType === "callback_query") {
         await ctx.answerCbQuery()
         await ctx.deleteMessage()
 
@@ -37,24 +37,24 @@ module.exports = async (ctx) => {
                         `admin_view_id_${ctx.state[0]}`
                     ),
                 ]),
-                parse_mode: 'HTML',
+                parse_mode: "HTML",
             }
         )
     } else {
         const keyboard = []
         try {
             const splitEnter = ctx.message.text
-                .replace(/([-‐−‒­⁃–—―])/g, '-')
-                .split('\n')
+                .replace(/([-‐−‒­⁃–—―])/g, "-")
+                .split("\n")
             for (const i of splitEnter) {
                 const tempArr = []
-                const splitWand = i.split('|')
+                const splitWand = i.split("|")
                 for (const y of splitWand) {
-                    const splitDash = y.split(' - ')
+                    const splitDash = y.split(" - ")
 
                     const key = {
                         text: splitDash[0].trim(),
-                        url: splitDash.slice(1).join(' - ').trim(),
+                        url: splitDash.slice(1).join(" - ").trim(),
                     }
                     if (!key.text || !key.url)
                         return ctx.reply(`Ошибка при построении клавиатуры`)

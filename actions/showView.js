@@ -1,6 +1,6 @@
 /* eslint-disable no-dupe-keys */
-const View = require('../models/view')
-const { randomInt } = require('crypto')
+const View = require("../models/view")
+const { randomInt } = require("crypto")
 
 module.exports = async (ctx) => {
     let views = await View.find({
@@ -13,12 +13,11 @@ module.exports = async (ctx) => {
             { endDate: { $exists: false } },
         ],
         $or: [{ lang: ctx.user.lang }, { lang: null }],
-        status: 'doing',
+        status: "doing",
     })
 
     views = views.filter((view) => {
-        if (view.unique && view.users.includes(ctx.user.id)) return false
-        else return true
+        return !(view.unique && view.users.includes(ctx.user.id))
     })
 
     if (!views.length) return
@@ -31,8 +30,8 @@ module.exports = async (ctx) => {
             $addToSet: { users: ctx.user.id },
             status:
                 view.quantity && view.quantity <= view.views + 1
-                    ? 'ended'
-                    : 'doing',
+                    ? "ended"
+                    : "doing",
             $inc: { views: 1 },
         }),
         ctx.telegram.sendCopy(ctx.user.id, view.message, {

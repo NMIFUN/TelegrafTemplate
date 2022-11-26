@@ -1,20 +1,20 @@
 /* eslint-disable no-redeclare */
-const User = require('../../models/user')
-const Markup = require('telegraf/markup')
+const User = require("../../models/user")
+const Markup = require("telegraf/markup")
 var exportTemplate = {
-    _id: '',
-    id: '',
-    name: '',
-    username: '',
-    state: '',
-    lang: '',
-    ban: '',
-    langCode: '',
-    alive: '',
-    from: '',
-    lastMessage: '',
-    createdAt: '',
-    updatedAt: '',
+    _id: "",
+    id: "",
+    name: "",
+    username: "",
+    state: "",
+    lang: "",
+    ban: "",
+    langCode: "",
+    alive: "",
+    from: "",
+    lastMessage: "",
+    createdAt: "",
+    updatedAt: "",
 }
 
 module.exports = async (ctx) => {
@@ -23,33 +23,33 @@ module.exports = async (ctx) => {
 
         let contentUsers = []
         switch (ctx.state[0]) {
-            case 'alive':
-                var users = await User.find({ alive: true }, '-_id id').lean()
+            case "alive":
+                var users = await User.find({ alive: true }, "-_id id").lean()
 
                 contentUsers = users.map((value) => Object.values(value))
                 break
-            case 'all':
-                var users = await User.find({}, '-_id id').lean()
+            case "all":
+                var users = await User.find({}, "-_id id").lean()
 
                 contentUsers = users.map((value) => Object.values(value))
                 break
-            case 'full':
+            case "full":
                 var users = await User.find(
                     {},
-                    Object.keys(exportTemplate).join(' ')
+                    Object.keys(exportTemplate).join(" ")
                 ).lean()
 
-                contentUsers = [Object.keys(exportTemplate).join(';')]
+                contentUsers = [Object.keys(exportTemplate).join(";")]
                 contentUsers.push(
                     users.map((value) =>
-                        Object.values({ ...exportTemplate, ...value }).join(';')
+                        Object.values({ ...exportTemplate, ...value }).join(";")
                     )
                 )
                 break
         }
 
         return ctx.replyWithDocument({
-            source: Buffer.from(contentUsers.join('\n'), 'utf8'),
+            source: Buffer.from(contentUsers.join("\n"), "utf8"),
             filename: `users.csv`,
         })
     } else {

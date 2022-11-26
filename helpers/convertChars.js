@@ -1,5 +1,5 @@
 const convert = (str) => {
-    const chars = { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }
+    const chars = { "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }
 
     return str.replace(/[<>&]/g, (s) => {
         return chars[s]

@@ -1,9 +1,9 @@
-const config = require('../../config.json')
-const admin = require('../../helpers/admin.js')
-const fs = require('fs').promises
+const config = require("../../config.json")
+const admin = require("../../helpers/admin.js")
+const fs = require("fs").promises
 
 module.exports = async (ctx) => {
-    if (ctx.updateType === 'callback_query') {
+    if (ctx.updateType === "callback_query") {
         await ctx.answerCbQuery()
 
         ctx.user.state = `admin_addSubscription`
@@ -19,15 +19,15 @@ module.exports = async (ctx) => {
                     (e) =>
                         `<a href='${e.link}'>${e.title}</a> ${e.lang} (<code>${e.id}</code>)`
                 )
-                .join(', ')}`,
+                .join(", ")}`,
             {
                 ...admin.backKeyboard,
-                parse_mode: 'HTML',
+                parse_mode: "HTML",
                 disable_web_page_preview: true,
             }
         )
     } else {
-        const list = ctx.message.text.split(' ')
+        const list = ctx.message.text.split(" ")
 
         let find = config.subsChannels.findIndex((o) => o.id == list[0])
         if (find !== -1) config.subsChannels.splice(find, 1)
@@ -50,12 +50,12 @@ module.exports = async (ctx) => {
                     link: list[1],
                     title: getChat.title,
                     id: getChat.id,
-                    lang: list[2] || 'all',
+                    lang: list[2] || "all",
                 })
             else config.subsChannels.splice(find, 1)
         }
 
-        await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
+        await fs.writeFile("config.json", JSON.stringify(config, null, "  "))
 
         return ctx.replyWithHTML(
             `Список каналов/чатов на обязательную подписку обновлен.\n
@@ -64,7 +64,7 @@ module.exports = async (ctx) => {
                     (e) =>
                         `<a href='${e.link}'>${e.title}</a> ${e.lang} (<code>${e.id}</code>)`
                 )
-                .join(', ')}`,
+                .join(", ")}`,
             {
                 ...admin.backKeyboard,
                 disable_web_page_preview: true,

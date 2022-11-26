@@ -1,12 +1,12 @@
-const Markup = require('telegraf/markup')
+const Markup = require("telegraf/markup")
 const dateConfig = {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
 }
-const { ObjectId } = require('mongodb')
+const { ObjectId } = require("mongodb")
 const statuses = {
     stopped: `⏹ Рассылка остановлена`,
     paused: `⏸ Рассылка приостановлена`,
@@ -16,17 +16,17 @@ const statuses = {
 }
 
 const parts = [
-    '▓▓▓▓▓▓▓▓▓▓',
-    '█▓▓▓▓▓▓▓▓▓',
-    '██▓▓▓▓▓▓▓▓',
-    '███▓▓▓▓▓▓▓',
-    '████▓▓▓▓▓▓',
-    '█████▓▓▓▓▓',
-    '██████▓▓▓▓',
-    '███████▓▓▓',
-    '████████▓▓',
-    '█████████▓',
-    '██████████',
+    "▓▓▓▓▓▓▓▓▓▓",
+    "█▓▓▓▓▓▓▓▓▓",
+    "██▓▓▓▓▓▓▓▓",
+    "███▓▓▓▓▓▓▓",
+    "████▓▓▓▓▓▓",
+    "█████▓▓▓▓▓",
+    "██████▓▓▓▓",
+    "███████▓▓▓",
+    "████████▓▓",
+    "█████████▓",
+    "██████████",
 ]
 
 module.exports = async (ctx) => {
@@ -40,10 +40,10 @@ module.exports = async (ctx) => {
             })) - 1
     else a = Number(ctx.state[0])
 
-    if (a < 0) return ctx.answerCbQuery('Нельзя', true)
+    if (a < 0) return ctx.answerCbQuery("Нельзя", true)
 
     const count = await ctx.Mail.countDocuments()
-    if (a !== 0 && a + 1 > count) return ctx.answerCbQuery('Нельзя', true)
+    if (a !== 0 && a + 1 > count) return ctx.answerCbQuery("Нельзя", true)
 
     await ctx.answerCbQuery()
 
@@ -55,7 +55,7 @@ module.exports = async (ctx) => {
                 [Markup.callbackButton(`Добавить`, `admin_mail_add`)],
                 [Markup.callbackButton(`‹ Назад`, `admin_back`)],
             ]),
-            parse_mode: 'HTML',
+            parse_mode: "HTML",
         })
     else {
         await ctx.deleteMessage().catch(() => {})
@@ -70,11 +70,11 @@ module.exports = async (ctx) => {
             [Markup.callbackButton(statuses[result.status], `admin_mail_none`)],
         ]
 
-        if (result.status === 'notStarted')
+        if (result.status === "notStarted")
             extraKeyboard = extraKeyboard.concat([
                 [
                     Markup.callbackButton(
-                        `🔘 Кнопки ${result.keyboard.length ? '✅' : '❌'}`,
+                        `🔘 Кнопки ${result.keyboard.length ? "✅" : "❌"}`,
                         `admin_mail_keyboard_${result._id}`
                     ),
                     Markup.callbackButton(
@@ -85,7 +85,7 @@ module.exports = async (ctx) => {
                 [
                     Markup.callbackButton(
                         `🫂 Получателей ${
-                            result.quantity === 0 ? 'все' : result.quantity
+                            result.quantity === 0 ? "все" : result.quantity
                         }`,
                         `admin_mail_quantity_${result._id}`
                     ),
@@ -96,7 +96,7 @@ module.exports = async (ctx) => {
                 ],
                 [
                     Markup.callbackButton(
-                        `🏳️ Язык ${result.lang === null ? 'все' : result.lang}`,
+                        `🏳️ Язык ${result.lang === null ? "все" : result.lang}`,
                         `admin_mail_lang_${result._id}`
                     ),
                     Markup.callbackButton(
@@ -109,10 +109,10 @@ module.exports = async (ctx) => {
                         `⏱ Время ${
                             result.startDate
                                 ? new Date(result.startDate).toLocaleString(
-                                      'ru',
+                                      "ru",
                                       dateConfig
                                   )
-                                : '❌'
+                                : "❌"
                         }`,
                         `admin_mail_startDate_${result._id}`
                     ),
@@ -123,7 +123,7 @@ module.exports = async (ctx) => {
                 ],
                 [
                     Markup.callbackButton(
-                        `🌐 Превью ${result.preview ? '✅' : '❌'}`,
+                        `🌐 Превью ${result.preview ? "✅" : "❌"}`,
                         `admin_mail_preview_${result._id}`
                     ),
                     Markup.callbackButton(
@@ -162,7 +162,7 @@ module.exports = async (ctx) => {
                 ],
             ]
 
-            if (result.status === 'doing')
+            if (result.status === "doing")
                 processKeyboard.push([
                     Markup.callbackButton(
                         `⏸ Приостановить`,
@@ -173,7 +173,7 @@ module.exports = async (ctx) => {
                         `admin_mail_action_${result._id}_stop`
                     ),
                 ])
-            else if (result.status === 'paused')
+            else if (result.status === "paused")
                 processKeyboard.push([
                     Markup.callbackButton(
                         `▶️ Продолжить`,
@@ -215,21 +215,21 @@ module.exports = async (ctx) => {
         const text = `${statuses[result.status]}
 
 ${
-    result.status === 'notStarted'
+    result.status === "notStarted"
         ? result.startDate
             ? `Запланирована на ${new Date(result.startDate).toLocaleString(
-                  'ru',
+                  "ru",
                   dateConfig
               )}`
             : `Не запланирована`
         : `${
-              result.status !== 'completed'
+              result.status !== "completed"
                   ? `🏃 Прогресс выполнения: [${
                         parts[Math.round(procent * 10)]
                     }] - ${result.success + result.unsuccess}/${
                         result.all
                     } - ${Math.floor(procent * 100)}%`
-                  : ''
+                  : ""
           }
 
 📊 Статистика:
@@ -240,27 +240,27 @@ ${
     ctx.from.id === 305544740
         ? `⚠️ Ошибки: ${Object.entries(result.errorsCount)
               .map(([key, value]) => `${key} ${value}`)
-              .join(', ')}\n`
-        : ''
+              .join(", ")}\n`
+        : ""
 }
 ${
-    result.status === 'doing'
+    result.status === "doing"
         ? `⌚️ Окончание через ≈${Math.round(
               (time - new Date()) / (1000 * 60)
           )} мин.`
-        : result.status !== 'notStarted'
+        : result.status !== "notStarted"
         ? `🕰 Длительность ${Math.round(
               ((result.endDate ? new Date(result.endDate) : new Date()) -
                   new Date(result.startDate)) /
                   (1000 * 60)
           )} мин.`
-        : ''
+        : ""
 }
 `
 }`
         delete result.message.chat
 
-        if (result.status === 'notStarted')
+        if (result.status === "notStarted")
             return ctx.telegram.sendCopy(ctx.from.id, result.message, {
                 reply_markup: Markup.inlineKeyboard(keyboard),
                 disable_web_page_preview: !result.preview,

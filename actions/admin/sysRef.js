@@ -1,21 +1,21 @@
-const Ref = require('../../models/ref')
-const User = require('../../models/user')
+const Ref = require("../../models/ref")
+const User = require("../../models/user")
 
 const dateConfig = {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
 }
-const Markup = require('telegraf/markup')
+const Markup = require("telegraf/markup")
 
 const defaultShift = 20
 
 module.exports = async (ctx) => {
     if (!ctx.state[0]) ctx.state[0] = 0
 
-    if (ctx.message?.text && ctx.state[1] === 'price') {
+    if (ctx.message?.text && ctx.state[1] === "price") {
         ctx.user.state = null
 
         await Ref.updateOne({ name: ctx.state[0] }, { price: ctx.message.text })
@@ -24,7 +24,7 @@ module.exports = async (ctx) => {
     if (isNaN(ctx.state[0])) {
         if (ctx.callbackQuery) await ctx.answerCbQuery()
 
-        if (ctx.state[1] === 'price' && ctx.callbackQuery) {
+        if (ctx.state[1] === "price" && ctx.callbackQuery) {
             ctx.user.state = `admin_sysRef_${ctx.state[0]}_price`
 
             return ctx.editMessageText(
@@ -36,7 +36,7 @@ module.exports = async (ctx) => {
                             `admin_sysRef_${ctx.state[0]}`
                         ),
                     ],
-                ]).extra({ parse_mode: 'HTML' })
+                ]).extra({ parse_mode: "HTML" })
             )
         }
 
@@ -46,33 +46,33 @@ module.exports = async (ctx) => {
             User.countDocuments({ from: `ref-${ctx.state[0]}`, alive: true }),
         ])
 
-        return ctx[ctx.message ? 'reply' : 'editMessageText'](
+        return ctx[ctx.message ? "reply" : "editMessageText"](
             `
 Всего переходов: ${result.count} ${
                 result.price
                     ? `(${(result.price / result.count).format(1)} р.ед)`
-                    : ''
+                    : ""
             }
 Уникальных переходов: ${result.uniqueCount} (${Math.round(
                 (result.uniqueCount / result.count) * 100
             )}%) ${
                 result.price
                     ? `${(result.price / result.uniqueCount).format(1)}`
-                    : ''
+                    : ""
             }
 Новых пользователей: ${result.newCount} (${Math.round(
                 (result.newCount / result.uniqueCount) * 100
             )}%) ${
                 result.price
                     ? `${(result.price / result.newCount).format(1)}`
-                    : ''
+                    : ""
             }
 Живых пользователей: ${alive} (${Math.round(
                 (alive / result.newCount) * 100
-            )}%)  ${result.price ? `${(result.price / alive).format(1)}` : ''}
-${result.price ? `Стоимость: ${result.price}\n` : ''}
-Первый переход: ${new Date(result.first).toLocaleString('ru', dateConfig)}
-Последний переход: ${new Date(result.last).toLocaleString('ru', dateConfig)}
+            )}%)  ${result.price ? `${(result.price / alive).format(1)}` : ""}
+${result.price ? `Стоимость: ${result.price}\n` : ""}
+Первый переход: ${new Date(result.first).toLocaleString("ru", dateConfig)}
+Последний переход: ${new Date(result.last).toLocaleString("ru", dateConfig)}
 
 Ссылка: https://t.me/${process.env.BOT_USERNAME}?start=ref-${result.name}
     `,
@@ -91,7 +91,7 @@ ${result.price ? `Стоимость: ${result.price}\n` : ''}
                 ],
                 [Markup.callbackButton(`‹ Назад`, `admin_sysRef`)],
             ]).extra({
-                parse_mode: 'HTML',
+                parse_mode: "HTML",
                 disable_web_page_preview: true,
             })
         )
@@ -108,12 +108,12 @@ code - любой код для отличия ссылки от других с
             Markup.inlineKeyboard([
                 Markup.callbackButton(`‹ Назад`, `admin_back`),
             ]).extra({
-                parse_mode: 'HTML',
+                parse_mode: "HTML",
                 disable_web_page_preview: true,
             })
         )
 
-    if (shift < 0 || shift >= count) return ctx.answerCbQuery('Нельзя', true)
+    if (shift < 0 || shift >= count) return ctx.answerCbQuery("Нельзя", true)
     await ctx.answerCbQuery()
 
     const results = await Ref.find()
@@ -136,9 +136,9 @@ code - любой код для отличия ссылки от других с
         `
 <code>https://t.me/${process.env.BOT_USERNAME}?start=ref-</code>code
 
-${content.join('\n')}`,
+${content.join("\n")}`,
         {
-            parse_mode: 'HTML',
+            parse_mode: "HTML",
             reply_markup: {
                 inline_keyboard: Markup.inlineKeyboard(keyboard, {
                     columns: 2,

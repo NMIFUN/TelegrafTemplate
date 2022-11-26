@@ -1,4 +1,4 @@
-const Markup = require('telegraf/markup')
+const Markup = require("telegraf/markup")
 
 module.exports = async (ctx) => {
     await ctx.answerCbQuery()
@@ -10,6 +10,6 @@ module.exports = async (ctx) => {
         reply_markup: Markup.inlineKeyboard([
             Markup.callbackButton(`‹ Назад`, `admin_mail`),
         ]),
-        parse_mode: 'HTML',
+        parse_mode: "HTML",
     })
 }

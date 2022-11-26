@@ -1,15 +1,15 @@
 /* eslint-disable no-unused-vars */
 function r() {}
 ;(async () => {
-    const { parentPort, workerData } = require('worker_threads')
-    const mongoose = require('../../../models')
+    const { parentPort, workerData } = require("worker_threads")
+    const mongoose = require("../../../models")
 
-    const Mail = require('../../../models/mail')
-    const User = require('../../../models/user')
+    const Mail = require("../../../models/mail")
+    const User = require("../../../models/user")
     const sleep = (millis) =>
         new Promise((resolve) => setTimeout(resolve, millis))
 
-    const { Telegraf } = require('telegraf')
+    const { Telegraf } = require("telegraf")
     const bot = new Telegraf(process.env.BOT_TOKEN)
 
     let mail = await Mail.findById(workerData)
@@ -26,7 +26,7 @@ function r() {}
                 10000000
         )
 
-    mail.status = 'doing'
+    mail.status = "doing"
     if (mail.success + mail.unsuccess === 0) {
         mail.startDate = Date.now()
         mail.all = users.length
@@ -61,7 +61,7 @@ function r() {}
                         ? mail.errorsCount[e.description]++
                         : (mail.errorsCount[e.description] = 1)
 
-                    if (e.description.startsWith('Too Many Requests:')) {
+                    if (e.description.startsWith("Too Many Requests:")) {
                         await sleep(parseInt(e.description.match(/\d+/)) * 1000)
                         i--
                     } else {
@@ -91,8 +91,8 @@ function r() {}
             await User.updateMany({ id: { $in: alive } }, { alive: true })
             alive = []
 
-            if (mailUpd.status === 'paused' || mailUpd.status === 'stopped')
-                return parentPort.postMessage('stop')
+            if (mailUpd.status === "paused" || mailUpd.status === "stopped")
+                return parentPort.postMessage("stop")
         }
     }
 
@@ -102,12 +102,12 @@ function r() {}
 
     await Mail.findByIdAndUpdate(workerData, {
         endDate: Date.now(),
-        status: 'ended',
+        status: "ended",
         success: mail.success,
         unsuccess: mail.unsuccess,
         all: mail.success + mail.unsuccess,
         errorsCount: mail.errorsCount,
     })
 
-    parentPort.postMessage('complete')
+    parentPort.postMessage("complete")
 })()

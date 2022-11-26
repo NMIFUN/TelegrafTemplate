@@ -1,16 +1,21 @@
 module.exports = {
     root: true,
     parserOptions: {
-        ecmaVersion: 12,
-        sourceType: 'module',
+        ecmaVersion: "latest",
+        sourceType: "module",
     },
-    extends: ['eslint:recommended', 'prettier'],
+    extends: [
+        "eslint:recommended", "prettier","plugin:sonarjs/recommended",
+    ],
     env: {
         commonjs: true,
-        es2021: true,
+        es2022: true,
         node: true,
     },
     rules: {
-        'no-console': 'error',
+        "sonarjs/cognitive-complexity": ["error", 60],
+        "no-console": "error",
+        "quotes": [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }]
     },
+    "plugins": ["sonarjs"]
 }

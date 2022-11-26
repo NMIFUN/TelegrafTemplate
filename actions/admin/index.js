@@ -1,5 +1,5 @@
-const Markup = require('telegraf/markup')
-const config = require('../../config.json')
+const Markup = require("telegraf/markup")
+const config = require("../../config.json")
 
 module.exports = async (ctx) => {
     if (!config.admins.includes(ctx.from.id)) return
@@ -34,11 +34,11 @@ module.exports = async (ctx) => {
             ),
         ],
         [Markup.callbackButton(`Принятие заявок`, `admin_addJoin`)],
-    ]).extra({ parse_mode: 'HTML' })
+    ]).extra({ parse_mode: "HTML" })
 
     ctx.user.state = null
 
-    if (ctx.updateType === 'callback_query') {
+    if (ctx.updateType === "callback_query") {
         await ctx.answerCbQuery()
 
         if (ctx.callbackQuery.message.text)

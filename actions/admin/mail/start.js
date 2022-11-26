@@ -1,5 +1,5 @@
-const Markup = require('telegraf/markup')
-const lauchWorker = require('../mail/lauchWorker')
+const Markup = require("telegraf/markup")
+const lauchWorker = require("../mail/lauchWorker")
 
 module.exports = async (ctx) => {
     await ctx.answerCbQuery()
@@ -7,7 +7,7 @@ module.exports = async (ctx) => {
 
     try {
         var mail = await ctx.Mail.findByIdAndUpdate(ctx.state[0], {
-            status: 'doing',
+            status: "doing",
         })
     } catch (error) {
         return ctx.reply(`Ошибка при сохранении: ${error}`)
@@ -18,6 +18,6 @@ module.exports = async (ctx) => {
         reply_markup: Markup.inlineKeyboard([
             Markup.callbackButton(`Просмотр`, `admin_mail_id_${ctx.state[0]}`),
         ]),
-        parse_mode: 'HTML',
+        parse_mode: "HTML",
     })
 }

@@ -1,4 +1,4 @@
-const Markup = require('telegraf/markup')
+const Markup = require("telegraf/markup")
 
 const backKeyboard = Markup.inlineKeyboard(
     [Markup.callbackButton(`‹ Назад`, `admin_back`)],

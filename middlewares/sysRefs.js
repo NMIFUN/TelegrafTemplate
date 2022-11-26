@@ -1,14 +1,14 @@
-const Ref = require('../models/ref')
+const Ref = require("../models/ref")
 
 module.exports = async (ctx, next) => {
-    if (ctx.chat.type !== 'private') return next()
+    if (ctx.chat.type !== "private") return next()
 
-    const split = ctx.message.text.split(' ')
-    if (split[0] !== '/start') return next()
+    const split = ctx.message.text.split(" ")
+    if (split[0] !== "/start") return next()
 
-    const cmd = (split[1] && split[1].split('-')) || []
+    const cmd = (split[1] && split[1].split("-")) || []
 
-    if (cmd[0] === 'ref') {
+    if (cmd[0] === "ref") {
         let newCount = 0
         if (ctx.freshUser) newCount = 1
 

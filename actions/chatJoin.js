@@ -1,6 +1,6 @@
-const config = require('../config')
-const User = require('../models/user')
-const convertChars = require('../helpers/convertChars')
+const config = require("../config")
+const User = require("../models/user")
+const convertChars = require("../helpers/convertChars")
 
 module.exports = async (ctx) => {
     const find = config.joinChannels?.find(
@@ -13,9 +13,9 @@ module.exports = async (ctx) => {
 
         await ctx.telegram.sendMessage(
             ctx.from.id,
-            ctx.i18n.t('joinRequest.text'),
+            ctx.i18n.t("joinRequest.text"),
             {
-                parse_mode: 'HTML',
+                parse_mode: "HTML",
             }
         )
 

@@ -1,9 +1,9 @@
-const config = require('../../config.json')
-const admin = require('../../helpers/admin.js')
-const fs = require('fs').promises
+const config = require("../../config.json")
+const admin = require("../../helpers/admin.js")
+const fs = require("fs").promises
 
 module.exports = async (ctx) => {
-    if (ctx.updateType === 'callback_query') {
+    if (ctx.updateType === "callback_query") {
         await ctx.answerCbQuery()
 
         ctx.user.state = `admin_addJoin`
@@ -16,16 +16,16 @@ module.exports = async (ctx) => {
 Текущий список каналов/чатов на принятие заявок: ${
                 config.joinChannels
                     ?.map((e) => `${e.title} (<code>${e.id}</code>)`)
-                    .join(', ') || ''
+                    .join(", ") || ""
             }`,
             {
                 ...admin.backKeyboard,
-                parse_mode: 'HTML',
+                parse_mode: "HTML",
                 disable_web_page_preview: true,
             }
         )
     } else {
-        const list = ctx.message.text.split(' ')
+        const list = ctx.message.text.split(" ")
 
         if (!config.joinChannels?.length) config.joinChannels = []
 
@@ -46,13 +46,13 @@ module.exports = async (ctx) => {
                 })
             else config.joinChannels.splice(find, 1)
         }
-        await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
+        await fs.writeFile("config.json", JSON.stringify(config, null, "  "))
 
         return ctx.replyWithHTML(
             `Список каналов/чатов на принятие заявок обновлен.\n
 Текущий список каналов/чатов на принятие заявок: ${config.joinChannels
                 .map((e) => `${e.title} (<code>${e.id}</code>)`)
-                .join(', ')}`,
+                .join(", ")}`,
             {
                 ...admin.backKeyboard,
                 disable_web_page_preview: true,
