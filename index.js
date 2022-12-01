@@ -46,7 +46,7 @@ bot.catch(async (err, ctx) => {
   )
 
   return ctx.telegram.sendMessage(
-    305544740,
+    process.env.DEV_ID,
     `ERROR in ${ctx.updateType} | ${ctx?.from?.id || 'empty'} | ${
       ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'empty'
     } ${ctx?.user?.state || 'not state'}\n\n${err.name}\n${err.stack}\n${
@@ -87,6 +87,7 @@ bot.use(async (ctx, next) => {
     ctx.user.lastMessage = Date.now()
     ctx.user.name = convertChars(ctx.from.first_name)
     ctx.user.alive = true
+    ctx.user.langCode = ctx.from.language_code
     ctx.i18n.locale(ctx.user.lang || ctx.from.language_code)
   }
 

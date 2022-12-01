@@ -3,7 +3,7 @@
   "subsChannels": [],
   "botStat": {
     "send": false,
-    "alive": false,
-    "key": "u"
+    "alive": true,
+    "key": ""
   }
 }

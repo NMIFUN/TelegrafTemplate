@@ -213,7 +213,7 @@ ${
 📭 Неуспешно: ${result.unsuccess}
 
 ${
-  ctx.from.id === 305544740
+  ctx.from.id === Number(process.env.DEV_ID)
     ? `⚠️ Ошибки: ${Object.entries(result.errorsCount)
         .map(([key, value]) => `${key} ${value}`)
         .join(', ')}\n`
