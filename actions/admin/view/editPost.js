@@ -1,7 +1,7 @@
 const Markup = require('telegraf/markup')
 
 module.exports = async (ctx) => {
-  if (ctx.updateType === 'callback_query') {
+  if (ctx.callbackQuery) {
     await ctx.answerCbQuery()
     ctx.user.state = `admin_view_editPost_${ctx.state[0]}`
     await ctx.deleteMessage()

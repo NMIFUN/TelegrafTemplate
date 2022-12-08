@@ -2,7 +2,7 @@ const admin = require('../../helpers/admin.js')
 const User = require('../../models/user.js')
 
 module.exports = async (ctx) => {
-  if (ctx.updateType === 'callback_query') {
+  if (ctx.callbackQuery) {
     await ctx.answerCbQuery()
 
     ctx.user.state = 'admin_ban'

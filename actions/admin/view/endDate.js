@@ -1,7 +1,7 @@
 const Markup = require('telegraf/markup')
 
 module.exports = async (ctx) => {
-  if (ctx.updateType === 'callback_query') {
+  if (ctx.callbackQuery) {
     await ctx.answerCbQuery()
     await ctx.deleteMessage()
 

@@ -36,7 +36,7 @@ module.exports = async (ctx) => {
 
   ctx.user.state = null
 
-  if (ctx.updateType === 'callback_query') {
+  if (ctx.callbackQuery) {
     await ctx.answerCbQuery()
 
     if (ctx.callbackQuery.message.text) {

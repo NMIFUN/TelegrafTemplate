@@ -1,7 +1,7 @@
 const subscription = require('../middlewares/subscription')
 
 module.exports = async (ctx, next) => {
-  if (ctx.updateType === 'callback_query') {
+  if (ctx.callbackQuery) {
     ctx.user.lang = ctx.callbackQuery.data.split('_')[1]
     ctx.i18n.locale(ctx.user.lang)
 

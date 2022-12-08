@@ -3,7 +3,7 @@ const admin = require('../../helpers/admin.js')
 const fs = require('fs').promises
 
 module.exports = async (ctx) => {
-  if (ctx.updateType === 'callback_query') {
+  if (ctx.callbackQuery) {
     await ctx.answerCbQuery()
 
     ctx.user.state = 'admin_addSubscription'
