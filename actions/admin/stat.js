@@ -2,7 +2,7 @@ const User = require('../../models/user')
 const Markup = require('telegraf/markup')
 
 module.exports = async (ctx) => {
-  await ctx.answerCbQuery()
+  await ctx.answerCbQuery(`Получаю статистику, ожидайте`)
 
   const now = new Date()
   const today = new Date(
