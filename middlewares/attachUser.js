@@ -2,9 +2,9 @@ const User = require('../models/user')
 const convertChars = require('../helpers/convertChars')
 
 module.exports = async (ctx, next) => {
-  let user = await User.findOne({ id: ctx.from.id})
-  
-  if(!user && (ctx?.chat?.type === 'private' || ctx.callbackQuery)) {
+  let user = await User.findOne({ id: ctx.from.id })
+
+  if (!user && (ctx?.chat?.type === 'private' || ctx.callbackQuery)) {
     user = new User({
       id: ctx.from.id,
       name: convertChars(ctx.from.first_name),

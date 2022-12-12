@@ -2,6 +2,9 @@
 /* eslint-disable no-unused-vars */
 const path = require('path')
 require('dotenv').config({ path: path.resolve('.env') })
+const config = require('./config.json')
+
+const fs = require('fs').promises
 
 // eslint-disable-next-line no-extend-native
 Number.prototype.format = function (n, x) {
@@ -24,6 +27,35 @@ const bot = new Telegraf(process.env.BOT_TOKEN, { handlerTimeout: 1 })
 
 bot.catch(async (err, ctx) => {
   if (
+    (err.code === 429 && Date.now() - config.lastFloodError > 180000) ||
+    !config.lastFloodError
+  ) {
+    await ctx.telegram.sendMessage(
+      process.env.DEV_ID,
+      `FLOOD ERROR in ${ctx.updateType} | ${
+        ctx?.message?.text?.slice(0, 100) ||
+        ctx?.callbackQuery?.data ||
+        ctx?.inlineQuery?.query ||
+        'empty'
+      }
+      \n<i>${err.description}</i>`,
+      { parse_mode: 'HTML' }
+    )
+
+    config.lastFloodError = Date.now()
+    return fs.writeFile('config.json', JSON.stringify(config, null, '  '))
+  } else if (
+    err.code === 400 &&
+    err.description ===
+      'Bad Request: query is too old and response timeout expired or query ID is invalid'
+  )
+    return ctx.telegram.sendMessage(
+      process.env.DEV_ID,
+      `SLOW ANSWER in ${ctx.updateType} | ${ctx.callbackQuery.data}
+      \n<i>${err.description}</i>`,
+      { parse_mode: 'HTML' }
+    )
+  else if (
     (err.code === 400 || err.code === 403) &&
     err.description &&
     [
@@ -37,21 +69,26 @@ bot.catch(async (err, ctx) => {
   }
 
   console.error(
-    `Ooops, encountered an ERROR in ${ctx.updateType} | ${
-      ctx?.from?.id || 'empty'
-    } | ${
-      ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'empty'
-    } ${ctx?.user?.state || 'not state'}`,
+    `ERROR in ${ctx.updateType} | ${ctx.from?.id || 'noUserId'} | ${
+      ctx.message?.text?.slice(0, 100) ||
+      ctx.callbackQuery?.data ||
+      ctx.inlineQuery?.query ||
+      'noData'
+    } ${ctx.user?.state || 'noState'}`,
     err
   )
 
   return ctx.telegram.sendMessage(
     process.env.DEV_ID,
-    `ERROR in ${ctx.updateType} | ${ctx?.from?.id || 'empty'} | ${
-      ctx?.message?.text?.slice(0, 100) || ctx?.callbackQuery?.data || 'empty'
-    } ${ctx?.user?.state || 'not state'}\n\n${err.name}\n${err.stack}\n${
-      (err.on && JSON.stringify(err.on, null, ' ')) || 'empty'
-    }`
+    `ERROR in ${ctx.updateType} | ${ctx.from?.id || 'noUserId'} | ${
+      ctx.message?.text?.slice(0, 100) ||
+      ctx.callbackQuery?.data ||
+      ctx.inlineQuery?.query ||
+      'noData'
+    } ${ctx.user?.state || 'noState'}
+    \n<code>${err.stack}</code>
+    ${(err.on && JSON.stringify(err.on, null, ' ')) || 'noStack'}`,
+    { parse_mode: 'HTML' }
   )
 })
 
@@ -88,16 +125,24 @@ bot.use(async (ctx, next) => {
     ctx.user.name = convertChars(ctx.from.first_name)
     ctx.user.alive = true
     ctx.user.langCode = ctx.from.language_code
-    ctx.i18n.locale(ctx.user.lang || ctx.from.language_code)
+    ctx.i18n.locale(ctx.user?.lang
+      ? ctx.user.lang
+      : ['en', 'ru'].includes(ctx.from.language_code)
+      ? ctx.from.language_code
+      : 'ru')
   }
 
   await next()
+
   console.log(
-    `${ctx.updateType} ${ctx.updateSubTypes} from ${
-      (ctx.from && ctx.from.id) || 'UNDEFINED'
-    } ${ctx?.message?.text || ctx?.callbackQuery?.data || 'non'} ${
-      Date.now() - startDate
-    }ms`
+    `${new Date().toLocaleString('ru')} ${ctx.updateType}[${
+      ctx.updateSubTypes
+    }] | ${ctx.from?.id || 'noUserId'} | ${ctx.chat?.id || 'noChatId'} | ${
+      ctx.message?.text?.slice(0, 64) ||
+      ctx.callbackQuery?.data ||
+      ctx.inlineQuery?.query ||
+      'noData'
+    } [${Date.now() - startDate}ms]`
   )
 })
 
