@@ -208,7 +208,8 @@ schedule.scheduleJob('* * * * *', async () => {
 })
 
 const { randomInt } = require('crypto')
-schedule.scheduleJob(`0 0 */${randomInt(2, 6)} * *`, async () => {
+
+schedule.scheduleJob(`0 ${randomInt(2, 6)} * * *`, async () => {
   await updateStat(bot)
 
   await botStat()
