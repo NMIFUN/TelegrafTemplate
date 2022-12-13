@@ -27,8 +27,9 @@ const bot = new Telegraf(process.env.BOT_TOKEN, { handlerTimeout: 1 })
 
 bot.catch(async (err, ctx) => {
   if (
-    (err.code === 429 && Date.now() - config.lastFloodError > 180000) ||
-    !config.lastFloodError
+    err.code === 429 &&
+    err.description?.startsWith('Too Many Requests: retry after') &&
+    (Date.now() - config.lastFloodError > 180000 || !config.lastFloodError)
   ) {
     await ctx.telegram.sendMessage(
       process.env.DEV_ID,
@@ -125,11 +126,13 @@ bot.use(async (ctx, next) => {
     ctx.user.name = convertChars(ctx.from.first_name)
     ctx.user.alive = true
     ctx.user.langCode = ctx.from.language_code
-    ctx.i18n.locale(ctx.user?.lang
-      ? ctx.user.lang
-      : ['en', 'ru'].includes(ctx.from.language_code)
-      ? ctx.from.language_code
-      : 'ru')
+    ctx.i18n.locale(
+      ctx.user?.lang
+        ? ctx.user.lang
+        : ['en', 'ru'].includes(ctx.from.language_code)
+        ? ctx.from.language_code
+        : 'ru'
+    )
   }
 
   await next()

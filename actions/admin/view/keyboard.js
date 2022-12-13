@@ -23,13 +23,12 @@ module.exports = async (ctx) => {
     return ctx.replyWithHTML(
       `Введите список кнопок в следующем формате:
 
-Кнопка 1 - http://example1.com
+<code>Кнопка 1 http://example1.com</code>
 
-<i>с двух сторон от - должны быть пробелы</i>
-Используйте разделитель "|", чтобы добавить кнопки в один ряд:
+<i>Используйте разделитель "|", чтобы добавить кнопки в один ряд:</i>
 
-Кнопка 1 - http://example1.com | Кнопка 2 - http://example2.com
-Кнопка 3 - http://example3.com | Кнопка 4 - http://example4.com`,
+<code>Кнопка 1 http://example1.com | Кнопка 2 http://example2.com
+Кнопка 3 http://example3.com | Кнопка 4 http://example4.com</code>`,
       {
         reply_markup: Markup.inlineKeyboard([
           Markup.callbackButton('‹ Назад', `admin_view_id_${ctx.state[0]}`)
@@ -38,35 +37,43 @@ module.exports = async (ctx) => {
       }
     )
   } else {
-    const keyboard = []
-    try {
-      const splitEnter = ctx.message.text
-        .replace(/([-‐−‒­⁃–—―])/g, '-')
-        .split('\n')
-      for (const i of splitEnter) {
-        const tempArr = []
-        const splitWand = i.split('|')
-        for (const y of splitWand) {
-          const splitDash = y.split(' - ')
+    const possibleUrls = [
+      'http://',
+      'https://',
+      'tg://',
+      'ton://',
+      't.me/',
+      'telegram.me'
+    ]
 
-          const key = {
-            text: splitDash[0].trim(),
-            url: splitDash.slice(1).join(' - ').trim()
-          }
-          if (!key.text || !key.url) {
-            return ctx.reply('Ошибка при построении клавиатуры')
-          }
+    const splitByEnter = ctx.message.text
+      .replace(/([-‐−‒­⁃–—―])/g, '-')
+      .split('\n')
 
-          tempArr.push(key)
+    const keyboard = splitByEnter.map((enter) => {
+      const splitByWand = enter.split('|')
+
+      return splitByWand.map((wand) => {
+        const indexOfUrl = wand.indexOf(
+          possibleUrls.find((url) => wand.includes(url))
+        )
+        if (indexOfUrl === -1) return false
+
+        const key = {
+          text: wand.slice(0, indexOfUrl).replace(' - ', '').trim(),
+          url: wand.slice(indexOfUrl).trim()
         }
-        keyboard.push(tempArr)
-      }
-    } catch (error) {
+
+        return key.text && key.url ? key : false
+      })
+    })
+
+    if (
+      keyboard.findIndex(
+        (enterKeyboard) => enterKeyboard.findIndex((key) => !key) !== -1
+      ) !== -1
+    )
       return ctx.reply('Ошибка при построении клавиатуры')
-    }
-    if (!keyboard.length) {
-      return ctx.reply('Ошибка при построении клавиатуры')
-    }
 
     ctx.user.state = null
 
