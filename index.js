@@ -34,7 +34,8 @@ bot.catch(async (err, ctx) => {
     await ctx.telegram.sendMessage(
       process.env.DEV_ID,
       `FLOOD ERROR in ${ctx.updateType} | ${
-        ctx?.message?.text?.slice(0, 100) ||
+        (ctx?.message?.text &&
+          Array.from(convertChars(ctx.message.text)).slice(0, 500).join('')) ||
         ctx?.callbackQuery?.data ||
         ctx?.inlineQuery?.query ||
         'empty'
@@ -71,7 +72,8 @@ bot.catch(async (err, ctx) => {
 
   console.error(
     `ERROR in ${ctx.updateType} | ${ctx.from?.id || 'noUserId'} | ${
-      ctx.message?.text?.slice(0, 100) ||
+      (ctx?.message?.text &&
+        Array.from(ctx.message.text).slice(0, 500).join('')) ||
       ctx.callbackQuery?.data ||
       ctx.inlineQuery?.query ||
       'noData'
@@ -82,7 +84,8 @@ bot.catch(async (err, ctx) => {
   return ctx.telegram.sendMessage(
     process.env.DEV_ID,
     `ERROR in ${ctx.updateType} | ${ctx.from?.id || 'noUserId'} | ${
-      ctx.message?.text?.slice(0, 100) ||
+      (ctx.message?.text &&
+        Array.from(convertChars(ctx.message.text)).slice(0, 500).join('')) ||
       ctx.callbackQuery?.data ||
       ctx.inlineQuery?.query ||
       'noData'
