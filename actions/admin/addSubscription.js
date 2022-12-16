@@ -43,7 +43,7 @@ module.exports = async (ctx) => {
         // eslint-disable-next-line no-var
         var getChat = await ctx.telegram.getChat(list[0])
       } catch (e) {
-        return ctx.replyWithHTML('Неверный канал/чат')
+        return ctx.replyWithHTML('Неверный канал/чат или не добавлен бот')
       }
 
       find = config.subsChannels.findIndex((o) => o.id === getChat.id)

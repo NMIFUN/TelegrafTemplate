@@ -35,7 +35,7 @@ bot.catch(async (err, ctx) => {
       process.env.DEV_ID,
       `FLOOD ERROR in ${ctx.updateType} | ${
         (ctx?.message?.text &&
-          Array.from(convertChars(ctx.message.text)).slice(0, 500).join('')) ||
+          Array.from(convertChars(ctx.message.text)).slice(0, 300).join('')) ||
         ctx?.callbackQuery?.data ||
         ctx?.inlineQuery?.query ||
         'empty'
@@ -73,7 +73,7 @@ bot.catch(async (err, ctx) => {
   console.error(
     `ERROR in ${ctx.updateType} | ${ctx.from?.id || 'noUserId'} | ${
       (ctx?.message?.text &&
-        Array.from(ctx.message.text).slice(0, 500).join('')) ||
+        Array.from(ctx.message.text).slice(0, 300).join('')) ||
       ctx.callbackQuery?.data ||
       ctx.inlineQuery?.query ||
       'noData'
@@ -85,13 +85,14 @@ bot.catch(async (err, ctx) => {
     process.env.DEV_ID,
     `ERROR in ${ctx.updateType} | ${ctx.from?.id || 'noUserId'} | ${
       (ctx.message?.text &&
-        Array.from(convertChars(ctx.message.text)).slice(0, 500).join('')) ||
+        Array.from(convertChars(ctx.message.text)).slice(0, 300).join('')) ||
       ctx.callbackQuery?.data ||
       ctx.inlineQuery?.query ||
       'noData'
     } ${ctx.user?.state || 'noState'}
-    \n<code>${err.stack}</code>
-    ${(err.on && JSON.stringify(err.on, null, ' ')) || 'noStack'}`,
+    \n<code>${err.stack}</code>\n${
+      (err.on && `<code>${JSON.stringify(err.on, null, 2)}</code>`) || 'noStack'
+    }`,
     { parse_mode: 'HTML' }
   )
 })

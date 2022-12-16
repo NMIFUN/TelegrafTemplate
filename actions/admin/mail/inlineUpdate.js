@@ -63,6 +63,14 @@ ${
 📭 Неуспешно: ${mail.unsuccess}
 
 ${
+  ctx.from.id === Number(process.env.DEV_ID)
+    ? `⚠️ Ошибки: ${Object.entries(mail.errorsCount)
+        .map(([key, value]) => `${key} - ${value}`)
+        .join(', ')}\n`
+    : ''
+}
+
+${
   mail.status === 'doing'
     ? `⌚️ Окончание через ≈${Math.round(
         (time - new Date()) / (1000 * 60)
@@ -77,7 +85,6 @@ ${
 }
 `
 }`
-  // ⚠️ Ошибки: ${Object.entries(mail.errorsCount).map(([key, value]) => `${key} ${value}`).join(', ')}
 
   return ctx.editMessageText(result, {
     parse_mode: 'HTML',

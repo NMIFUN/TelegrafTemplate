@@ -215,7 +215,7 @@ ${
 ${
   ctx.from.id === Number(process.env.DEV_ID)
     ? `⚠️ Ошибки: ${Object.entries(result.errorsCount)
-        .map(([key, value]) => `${key} ${value}`)
+        .map(([key, value]) => `${key} - ${value}`)
         .join(', ')}\n`
     : ''
 }
