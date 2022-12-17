@@ -52,21 +52,21 @@ ${
       : 'Не запланирована'
     : `${
         mail.status !== 'completed'
-          ? `🏃 Прогресс выполнения: [${parts[Math.round(procent * 10)]}] - ${
+          ? `🏃 Прогресс выполнения: [${parts[Math.round(procent * 10)]}] - ${(
               mail.success + mail.unsuccess
-            }/${mail.all} - ${Math.floor(procent * 100)}%`
+            ).format(0)}/${mail.all.format(0)} - ${Math.floor(procent * 100)}%`
           : ''
       }
 
 📊 Статистика:
-📬 Успешно: ${mail.success}
-📭 Неуспешно: ${mail.unsuccess}
+📬 Успешно: ${mail.success.format(0)}
+📭 Неуспешно: ${mail.unsuccess.format(0)}
 
 ${
   ctx.from.id === Number(process.env.DEV_ID)
     ? `⚠️ Ошибки: ${Object.entries(mail.errorsCount)
         .map(([key, value]) => `${key} - ${value}`)
-        .join(', ')}\n`
+        .join(', ')}`
     : ''
 }
 

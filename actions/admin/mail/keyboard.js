@@ -43,12 +43,10 @@ module.exports = async (ctx) => {
       'tg://',
       'ton://',
       't.me/',
-      'telegram.me'
+      'telegram.me/'
     ]
 
-    const splitByEnter = ctx.message.text
-      .replace(/([-‐−‒­⁃–—―])/g, '-')
-      .split('\n')
+    const splitByEnter = ctx.message.text.split('\n')
 
     const keyboard = splitByEnter.map((enter) => {
       const splitByWand = enter.split('|')

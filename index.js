@@ -200,7 +200,7 @@ const Mail = require('./models/mail')
 const User = require('./models/user')
 const lauchWorker = require('./actions/admin/mail/lauchWorker')
 
-function r() {}
+function imitateAsync() {}
 ;(async () => {
   const result = await Mail.findOne({ status: 'doing' })
   if (result) lauchWorker(result._id)

@@ -1,4 +1,5 @@
 const User = require('../models/user')
+
 const sleep = (millis) => new Promise((resolve) => setTimeout(resolve, millis))
 const shift = 5000
 
@@ -42,7 +43,7 @@ module.exports = async (bot) => {
           i = find.i - 1
         } else {
           const success = results.filter((result) => result.result).length
-          await sleep(success * 8)
+          await sleep(success * 6)
         }
 
         results
@@ -70,7 +71,7 @@ module.exports = async (bot) => {
     }
   }
 
-  // console.log(Object.entries(reportsCount).map(([key, value]) => `${key} ${value}`))
+  // console.log(Object.entries(reportsCount).map(([key, value]) => `${key} - ${value}`))
 
   await Promise.all([
     ...promises,

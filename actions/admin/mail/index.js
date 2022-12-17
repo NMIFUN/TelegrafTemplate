@@ -29,6 +29,8 @@ const parts = [
   '██████████'
 ]
 
+const substrHTML = require('../../../helpers/substrHTML')
+
 module.exports = async (ctx) => {
   let a
 
@@ -190,42 +192,52 @@ module.exports = async (ctx) => {
         (result.all - result.success - result.unsuccess) * 0.016
     )
 
-    const text = `${statuses[result.status]}
+    const text = `${substrHTML(
+      result.message.text || result.message.caption || 'Нет текста',
+      120
+    )}...
+
+<b>${statuses[result.status]}</b>
 
 ${
   result.status === 'notStarted'
     ? result.startDate
-      ? `Запланирована на ${new Date(result.startDate).toLocaleString(
+      ? `<b>Запланирована</b> на ${new Date(result.startDate).toLocaleString(
           'ru',
           dateConfig
         )}`
-      : 'Не запланирована'
+      : '<b>Не запланирована</b>'
     : `${
         result.status !== 'completed'
-          ? `🏃 Прогресс выполнения: [${parts[Math.round(procent * 10)]}] - ${
-              result.success + result.unsuccess
-            }/${result.all} - ${Math.floor(procent * 100)}%`
+          ? `<b>🏃 Прогресс выполнения:</b> [${
+              parts[Math.round(procent * 10)]
+            }] - ${(result.success + result.unsuccess).format(
+              0
+            )}/${result.all.format(0)} - ${Math.floor(procent * 100)}%`
           : ''
       }
 
-📊 Статистика:
-📬 Успешно: ${result.success}
-📭 Неуспешно: ${result.unsuccess}
+<b>📊 Статистика:</b>
+📬 Успешно: ${result.success.format(0)}
+📭 Неуспешно: ${result.unsuccess.format(0)}
 
 ${
   ctx.from.id === Number(process.env.DEV_ID)
-    ? `⚠️ Ошибки: ${Object.entries(result.errorsCount)
-        .map(([key, value]) => `${key} - ${value}`)
-        .join(', ')}\n`
+    ? `<b>⚠️ Ошибки:</b> ${
+        Object.entries(result.errorsCount)
+          .map(([key, value]) => `${key} - ${value}`)
+          .join(', ') || 'нет ошибок'
+      }`
     : ''
 }
+
 ${
   result.status === 'doing'
-    ? `⌚️ Окончание через ≈${Math.round(
+    ? `<b>⌚️ Окончание через</b> ≈${Math.round(
         (time - new Date()) / (1000 * 60)
       )} мин.`
     : result.status !== 'notStarted'
-    ? `🕰 Длительность ${Math.round(
+    ? `<b>🕰 Длительность</b> ${Math.round(
         ((result.endDate ? new Date(result.endDate) : new Date()) -
           new Date(result.startDate)) /
           (1000 * 60)
@@ -236,15 +248,15 @@ ${
 }`
     delete result.message.chat
 
-    if (result.status === 'notStarted') {
+    if (result.status === 'notStarted')
       return ctx.telegram.sendCopy(ctx.from.id, result.message, {
         reply_markup: Markup.inlineKeyboard(keyboard),
         disable_web_page_preview: !result.preview
       })
-    } else {
+    else
       return ctx.replyWithHTML(text, {
-        reply_markup: Markup.inlineKeyboard(keyboard)
+        reply_markup: Markup.inlineKeyboard(keyboard),
+        disable_web_page_preview: !result.preview
       })
-    }
   }
 }

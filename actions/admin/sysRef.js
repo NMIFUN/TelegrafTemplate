@@ -43,23 +43,23 @@ module.exports = async (ctx) => {
 
     return ctx[ctx.message ? 'reply' : 'editMessageText'](
       `
-Всего переходов: ${result.count} ${
+Всего переходов: ${result.count.format(0)} ${
         result.price ? `(${(result.price / result.count).format(1)} р.ед)` : ''
       }
-Уникальных переходов: ${result.uniqueCount} (${Math.round(
+Уникальных переходов: ${result.uniqueCount.format(0)} (${Math.round(
         (result.uniqueCount / result.count) * 100
       )}%) ${
-        result.price ? `${(result.price / result.uniqueCount).format(1)}` : ''
+        result.price ? `${(result.price / result.uniqueCount).format(1)} р.ед` : ''
       }
-Новых пользователей: ${result.newCount} (${Math.round(
+Новых пользователей: ${result.newCount.format(0)} (${Math.round(
         (result.newCount / result.uniqueCount) * 100
       )}%) ${
-        result.price ? `${(result.price / result.newCount).format(1)}` : ''
+        result.price ? `${(result.price / result.newCount).format(1)} р.ед` : ''
       }
-Живых пользователей: ${alive} (${Math.round(
+Живых пользователей: ${alive.format(0)} (${Math.round(
         (alive / result.newCount) * 100
-      )}%)  ${result.price ? `${(result.price / alive).format(1)}` : ''}
-${result.price ? `Стоимость: ${result.price}\n` : ''}
+      )}%)  ${result.price ? `${(result.price / alive).format(1)} р.ед` : ''}
+${result.price ? `Стоимость: ${result.price.format(1)} р.ед\n` : ''}
 Первый переход: ${new Date(result.first).toLocaleString('ru', dateConfig)}
 Последний переход: ${new Date(result.last).toLocaleString('ru', dateConfig)}
 
