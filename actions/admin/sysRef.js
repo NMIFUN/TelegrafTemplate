@@ -49,7 +49,9 @@ module.exports = async (ctx) => {
 Уникальных переходов: ${result.uniqueCount.format(0)} (${Math.round(
         (result.uniqueCount / result.count) * 100
       )}%) ${
-        result.price ? `${(result.price / result.uniqueCount).format(1)} р.ед` : ''
+        result.price
+          ? `${(result.price / result.uniqueCount).format(1)} р.ед`
+          : ''
       }
 Новых пользователей: ${result.newCount.format(0)} (${Math.round(
         (result.newCount / result.uniqueCount) * 100

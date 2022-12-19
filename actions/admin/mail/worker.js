@@ -29,10 +29,12 @@ function imitateAsync() {}
 
   mail.status = 'doing'
   let y = 0
-  if (mail.success + mail.unsuccess === 0) {
-    mail.startDate = Date.now()
-    mail.all = usersCount
-  } else y = (mail.success + mail.unsuccess) / shift
+
+  if (mail.success + mail.unsuccess === 0) mail.startDate = Date.now()
+  else y = (mail.success + mail.unsuccess) / shift
+
+  mail.all = usersCount
+
   await mail.save()
 
   const message = await bot.telegram.sendCopy(
