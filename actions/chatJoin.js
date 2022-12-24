@@ -1,4 +1,4 @@
-const config = require('../config')
+const config = require('../config.json')
 const User = require('../models/user')
 const convertChars = require('../helpers/convertChars')
 
