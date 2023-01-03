@@ -6,21 +6,27 @@ const convertChars = require('../helpers/convertChars')
 module.exports = async (err, ctx) => {
   if (
     err.code === 429 &&
-    err.description?.startsWith('Too Many Requests: retry after') &&
-    (Date.now() - config.lastFloodError > 180000 || !config.lastFloodError)
+    err.description?.startsWith('Too Many Requests: retry after')
   ) {
-    await ctx.telegram.sendMessage(
-      process.env.DEV_ID,
-      `FLOOD ERROR in ${ctx.updateType}[${ctx.updateSubTypes}] | ${
-        (ctx?.message?.text &&
-          Array.from(convertChars(ctx.message.text)).slice(0, 300).join('')) ||
-        ctx?.callbackQuery?.data ||
-        ctx?.inlineQuery?.query ||
-        'empty'
-      }
+    if (Date.now() - config.lastFloodError < 180000 && config.lastFloodError)
+      return
+
+    await ctx.telegram
+      .sendMessage(
+        process.env.DEV_ID,
+        `FLOOD ERROR in ${ctx.updateType}[${ctx.updateSubTypes}] | ${
+          (ctx?.message?.text &&
+            Array.from(convertChars(ctx.message.text))
+              .slice(0, 300)
+              .join('')) ||
+          ctx?.callbackQuery?.data ||
+          ctx?.inlineQuery?.query ||
+          'empty'
+        }
       \n<i>${err.description}</i>`,
-      { parse_mode: 'HTML' }
-    )
+        { parse_mode: 'HTML' }
+      )
+      .catch(() => {})
 
     console.error(
       `${new Date().toLocaleString('ru')} SLOW ANSWER in FLOOD ERROR in ${
@@ -40,15 +46,22 @@ module.exports = async (err, ctx) => {
   } else if (
     err.code === 400 &&
     err.description ===
-      'Bad Request: query is too old and response timeout expired or query ID is invalid' &&
-    (Date.now() - config.lastTimeoutError > 180000 || !config.lastTimeoutError)
+      'Bad Request: query is too old and response timeout expired or query ID is invalid'
   ) {
-    await ctx.telegram.sendMessage(
-      process.env.DEV_ID,
-      `SLOW ANSWER in ${ctx.updateType}[${ctx.updateSubTypes}] | ${ctx.callbackQuery.data}
-        \n<i>${err.description}</i>`,
-      { parse_mode: 'HTML' }
+    if (
+      Date.now() - config.lastTimeoutError < 180000 &&
+      config.lastTimeoutError
     )
+      return
+
+    await ctx.telegram
+      .sendMessage(
+        process.env.DEV_ID,
+        `SLOW ANSWER in ${ctx.updateType}[${ctx.updateSubTypes}] | ${ctx.callbackQuery.data}
+        \n<i>${err.description}</i>`,
+        { parse_mode: 'HTML' }
+      )
+      .catch(() => {})
 
     console.error(
       `${new Date().toLocaleString('ru')} SLOW ANSWER in ${ctx.updateType}[${
@@ -60,6 +73,12 @@ module.exports = async (err, ctx) => {
     config.lastTimeoutError = Date.now()
     return fs.writeFile('config.json', JSON.stringify(config, null, '  '))
   } else if (
+    err.code === 400 &&
+    (err.description === 'Bad Request: message to edit not found' ||
+      err.description === 'Bad Request: MESSAGE_ID_INVALID')
+  )
+    return ctx.telegram.sendCopy(err.on.payload.chat_id, err.on.payload, err.on.payload).catch(() => {})
+  else if (
     (err.code === 400 || err.code === 403) &&
     err.description &&
     [
@@ -85,20 +104,23 @@ module.exports = async (err, ctx) => {
     err
   )
 
-  return ctx.telegram.sendMessage(
-    process.env.DEV_ID,
-    `ERROR in ${ctx.updateType}[${ctx.updateSubTypes}] | ${
-      ctx.from?.id || 'noUserId'
-    } | ${ctx.chat?.id || 'noChatId'} | ${
-      (ctx.message?.text &&
-        Array.from(convertChars(ctx.message.text)).slice(0, 300).join('')) ||
-      ctx.callbackQuery?.data ||
-      ctx.inlineQuery?.query ||
-      'noData'
-    } ${ctx.user?.state || 'noState'}
+  return ctx.telegram
+    .sendMessage(
+      process.env.DEV_ID,
+      `ERROR in ${ctx.updateType}[${ctx.updateSubTypes}] | ${
+        ctx.from?.id || 'noUserId'
+      } | ${ctx.chat?.id || 'noChatId'} | ${
+        (ctx.message?.text &&
+          Array.from(convertChars(ctx.message.text)).slice(0, 300).join('')) ||
+        ctx.callbackQuery?.data ||
+        ctx.inlineQuery?.query ||
+        'noData'
+      } ${ctx.user?.state || 'noState'}
     \n<code>${err.stack}</code>\n${
-      (err.on && `<code>${JSON.stringify(err.on, null, 2)}</code>`) || 'noStack'
-    }`,
-    { parse_mode: 'HTML' }
-  )
+        (err.on && `<code>${JSON.stringify(err.on, null, 2)}</code>`) ||
+        'noStack'
+      }`,
+      { parse_mode: 'HTML' }
+    )
+    .catch(() => {})
 }
