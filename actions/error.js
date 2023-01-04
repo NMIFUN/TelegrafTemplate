@@ -11,23 +11,6 @@ module.exports = async (err, ctx) => {
     if (Date.now() - config.lastFloodError < 180000 && config.lastFloodError)
       return
 
-    await ctx.telegram
-      .sendMessage(
-        process.env.DEV_ID,
-        `FLOOD ERROR in ${ctx.updateType}[${ctx.updateSubTypes}] | ${
-          (ctx?.message?.text &&
-            Array.from(convertChars(ctx.message.text))
-              .slice(0, 300)
-              .join('')) ||
-          ctx?.callbackQuery?.data ||
-          ctx?.inlineQuery?.query ||
-          'empty'
-        }
-      \n<i>${err.description}</i>`,
-        { parse_mode: 'HTML' }
-      )
-      .catch(() => {})
-
     console.error(
       `${new Date().toLocaleString('ru')} SLOW ANSWER in FLOOD ERROR in ${
         ctx.updateType
@@ -42,7 +25,26 @@ module.exports = async (err, ctx) => {
     )
 
     config.lastFloodError = Date.now()
-    return fs.writeFile('config.json', JSON.stringify(config, null, '  '))
+    await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
+
+    return ctx.telegram
+      .sendMessage(
+        process.env.DEV_ID,
+        `FLOOD ERROR in ${ctx.updateType}[${ctx.updateSubTypes}] | ${
+          (ctx?.message?.text &&
+            Array.from(convertChars(ctx.message.text))
+              .slice(0, 300)
+              .join('')) ||
+          ctx?.callbackQuery?.data ||
+          ctx?.inlineQuery?.query ||
+          'empty'
+        }
+      \n<i>${err.description}</i>`,
+        { parse_mode: 'HTML' }
+      )
+      .catch((error) => {
+        console.error('Error Flood handling error', error)
+      })
   } else if (
     err.code === 400 &&
     err.description ===
@@ -54,30 +56,36 @@ module.exports = async (err, ctx) => {
     )
       return
 
-    await ctx.telegram
-      .sendMessage(
-        process.env.DEV_ID,
-        `SLOW ANSWER in ${ctx.updateType}[${ctx.updateSubTypes}] | ${ctx.callbackQuery.data}
-        \n<i>${err.description}</i>`,
-        { parse_mode: 'HTML' }
-      )
-      .catch(() => {})
-
     console.error(
       `${new Date().toLocaleString('ru')} SLOW ANSWER in ${ctx.updateType}[${
         ctx.updateSubTypes
-      }] | ${ctx.callbackQuery.data}`,
+      }] | ${ctx.callbackQuery?.data}`,
       err
     )
 
     config.lastTimeoutError = Date.now()
-    return fs.writeFile('config.json', JSON.stringify(config, null, '  '))
+    await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
+
+    return ctx.telegram
+      .sendMessage(
+        process.env.DEV_ID,
+        `SLOW ANSWER in ${ctx.updateType}[${ctx.updateSubTypes}] | ${ctx.callbackQuery?.data}
+      \n<i>${err.description}</i>`,
+        { parse_mode: 'HTML' }
+      )
+      .catch((error) => {
+        console.error('Error SlowAnswer handling error', error)
+      })
   } else if (
     err.code === 400 &&
     (err.description === 'Bad Request: message to edit not found' ||
       err.description === 'Bad Request: MESSAGE_ID_INVALID')
   )
-    return ctx.telegram.sendCopy(err.on.payload.chat_id, err.on.payload, err.on.payload).catch(() => {})
+    return ctx.telegram
+      .sendCopy(err.on.payload.chat_id, err.on.payload, err.on.payload)
+      .catch((error) => {
+        console.error('Error MessageEdit handling error', error)
+      })
   else if (
     (err.code === 400 || err.code === 403) &&
     err.description &&
@@ -122,5 +130,7 @@ module.exports = async (err, ctx) => {
       }`,
       { parse_mode: 'HTML' }
     )
-    .catch(() => {})
+    .catch((error) => {
+      console.error('Error Main handling error', error)
+    })
 }
