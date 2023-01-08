@@ -16,7 +16,7 @@ module.exports = async (err, ctx) => {
         ctx.updateType
       }[${ctx.updateSubTypes}] | ${
         (ctx?.message?.text &&
-          Array.from(convertChars(ctx.message.text)).slice(0, 300).join('')) ||
+          Array.from(ctx.message.text).slice(0, 300).join('')) ||
         ctx?.callbackQuery?.data ||
         ctx?.inlineQuery?.query ||
         'empty'
@@ -39,7 +39,7 @@ module.exports = async (err, ctx) => {
           ctx?.inlineQuery?.query ||
           'empty'
         }
-      \n<i>${err.description}</i>`,
+      \n<i>${convertChars(err.description)}</i>`,
         { parse_mode: 'HTML' }
       )
       .catch((error) => {
@@ -70,7 +70,7 @@ module.exports = async (err, ctx) => {
       .sendMessage(
         process.env.DEV_ID,
         `SLOW ANSWER in ${ctx.updateType}[${ctx.updateSubTypes}] | ${ctx.callbackQuery?.data}
-      \n<i>${err.description}</i>`,
+      \n<i>${convertChars(err.description)}</i>`,
         { parse_mode: 'HTML' }
       )
       .catch((error) => {
@@ -124,8 +124,8 @@ module.exports = async (err, ctx) => {
         ctx.inlineQuery?.query ||
         'noData'
       } ${ctx.user?.state || 'noState'}
-    \n<code>${err.stack}</code>\n${
-        (err.on && `<code>${JSON.stringify(err.on, null, 2)}</code>`) ||
+    \n<code>${convertChars(err.stack)}</code>\n${
+        (err.on && `<code>${JSON.stringify(convertChars(err.on), null, 2)}</code>`) ||
         'noStack'
       }`,
       { parse_mode: 'HTML' }

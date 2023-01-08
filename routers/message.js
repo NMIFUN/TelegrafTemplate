@@ -97,6 +97,6 @@ stateRouter.on('admin', adminRouter)
 
 router.on('state', stateRouter)
 
-router.on('else', (ctx) => ctx.reply('🌯'))
+router.on('else', require('../actions/start'))
 
 module.exports = router
