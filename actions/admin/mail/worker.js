@@ -50,7 +50,10 @@ function imitateAsync() {}
   const message1 = { ...message, chat: {} }
 
   for (y; y <= Math.ceil(mail.all / shift); y++) {
-    const users = await User.find({ ...mailConfig, id: { $ne: mail.uid } }, { id: 1 })
+    const users = await User.find(
+      { ...mailConfig, id: { $ne: mail.uid } },
+      { id: 1 }
+    )
       .limit(shift)
       .skip(y * shift)
 

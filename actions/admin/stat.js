@@ -85,11 +85,11 @@ module.exports = async (ctx) => {
   ] = await Promise.all(promises)
 
   const text = `Всего: ${all.format(0)}
-Живых: ${alive.format(0)} (${Math.round((all / alive) * 100)}%)
+Живых: ${alive.format(0)} (${Math.round((alive / all) * 100)}%)
 
-DAU: ${dau.format(0)} (${Math.round((wau / dau) * 100)}%)
-WAU: ${wau.format(0)} (${Math.round((mau / wau) * 100)}%)
-MAU: ${mau.format(0)} (${Math.round((alive / mau) * 100)}%)
+DAU: ${dau.format(0)} (${Math.round((dau / wau) * 100)}%)
+WAU: ${wau.format(0)} (${Math.round((wau / mau) * 100)}%)
+MAU: ${mau.format(0)} (${Math.round((mau / alive) * 100)}%)
 
 Сегодня: +${forDay.format(0)} (+${aliveForDay.format(0)})
 Вчера: +${forYesterday.format(0)} (+${aliveForYesterday.format(0)})
@@ -97,7 +97,12 @@ MAU: ${mau.format(0)} (${Math.round((alive / mau) * 100)}%)
 
 ${langCodes
   .filter((lang) => lang.count > (langCodes[0].count / 100) * 1)
-  .map((lang) => `${lang._id?.toUpperCase()}: ${lang.count.format(0)} (${Math.round((alive / lang.count) * 100)}%)`)
+  .map(
+    (lang) =>
+      `${lang._id?.toUpperCase()}: ${lang.count.format(0)} (${Math.round(
+        (lang.count / alive) * 100
+      )}%)`
+  )
   .join(', ')}`
 
   return ctx.editMessageText(

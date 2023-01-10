@@ -69,7 +69,9 @@ module.exports = async (err, ctx) => {
     return ctx.telegram
       .sendMessage(
         process.env.DEV_ID,
-        `SLOW ANSWER in ${ctx.updateType}[${ctx.updateSubTypes}] | ${ctx.callbackQuery?.data}
+        `SLOW ANSWER in ${ctx.updateType}[${ctx.updateSubTypes}] | ${
+          ctx.callbackQuery?.data
+        }
       \n<i>${convertChars(err.description)}</i>`,
         { parse_mode: 'HTML' }
       )
@@ -125,7 +127,8 @@ module.exports = async (err, ctx) => {
         'noData'
       } ${ctx.user?.state || 'noState'}
     \n<code>${convertChars(err.stack)}</code>\n${
-        (err.on && `<code>${JSON.stringify(convertChars(err.on), null, 2)}</code>`) ||
+        (err.on &&
+          `<code>${JSON.stringify(convertChars(err.on), null, 2)}</code>`) ||
         'noStack'
       }`,
       { parse_mode: 'HTML' }
