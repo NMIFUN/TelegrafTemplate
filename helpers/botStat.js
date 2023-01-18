@@ -4,7 +4,7 @@ const axios = require('axios')
 const FormData = require('form-data')
 
 module.exports = async () => {
-  if (!config.botStat?.send) return
+  if (!config.botStat?.send && !config.botStat?.botMan) return
 
   const find = {}
   if (config.botStat.alive) find.alive = true
@@ -17,13 +17,27 @@ module.exports = async () => {
   const formData = new FormData()
   formData.append('file', Buffer.from(content, 'utf8'))
 
-  const axiosConfig = {
-    method: 'post',
-    url: `https://api.botstat.io/create/${process.env.BOT_TOKEN}/${config.botStat?.key}?notify_id=${config.admins[0]}`,
-    headers: {
-      ...formData.getHeaders()
-    },
-    data: formData
+  if (config.botStat?.send && config.botStat?.key) {
+    const axiosConfig = {
+      method: 'post',
+      url: `https://api.botstat.io/create/${process.env.BOT_TOKEN}/${config.botStat.key}?notify_id=${config.admins[0]}`,
+      headers: {
+        ...formData.getHeaders()
+      },
+      data: formData
+    }
+    await axios(axiosConfig)
   }
-  return axios(axiosConfig)
+
+  if (config.botStat?.botMan) {
+    const axiosConfig = {
+      method: 'post',
+      url: `https://api.botstat.io/botman/${process.env.BOT_TOKEN}?owner_id=${config.admins[0]}`,
+      headers: {
+        ...formData.getHeaders()
+      },
+      data: formData
+    }
+    await axios(axiosConfig)
+  }
 }
