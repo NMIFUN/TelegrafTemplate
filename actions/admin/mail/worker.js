@@ -8,6 +8,7 @@ const User = require('../../../models/user')
 
 const sleep = (millis) => new Promise((resolve) => setTimeout(resolve, millis))
 const shift = 5000
+let sleepTime = 18
 
 const { Telegraf } = require('telegraf')
 const bot = new Telegraf(process.env.BOT_TOKEN)
@@ -87,10 +88,11 @@ function imitateAsync() {}
         const find = results[findIndex]
         if (find) {
           await sleep(parseInt(find.result.match(/\d+/)) * 1000)
+          sleepTime += 2
           i = find.i - 1
         } else {
           const success = results.filter((result) => result.result).length
-          await sleep(success * 16)
+          await sleep(success * sleepTime)
         }
 
         results
