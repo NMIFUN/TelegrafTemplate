@@ -35,10 +35,12 @@ module.exports = async (ctx) => {
       )
     }
 
-    const [result, alive] = await Promise.all([
+    const [result, alive, subscribed] = await Promise.all([
       Ref.findOne({ name: ctx.state[0] }),
 
-      User.countDocuments({ from: `ref-${ctx.state[0]}`, alive: true })
+      User.countDocuments({ from: `ref-${ctx.state[0]}`, alive: true }),
+
+      User.countDocuments({ from: `ref-${ctx.state[0]}`, subscribed: true })
     ])
 
     return ctx[ctx.message ? 'reply' : 'editMessageText'](
@@ -57,6 +59,11 @@ module.exports = async (ctx) => {
         (result.newCount / result.uniqueCount) * 100
       )}%) ${
         result.price ? `${(result.price / result.newCount).format(1)} р.ед` : ''
+      }
+Прошедших ОП: ${subscribed.format(0)} (${Math.round(
+        (subscribed / result.newCount) * 100
+      )}%)  ${
+        result.price ? `${(result.price / subscribed).format(1)} р.ед` : ''
       }
 Живых пользователей: ${alive.format(0)} (${Math.round(
         (alive / result.newCount) * 100

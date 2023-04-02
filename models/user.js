@@ -22,7 +22,11 @@ let User = mongoose.Schema(
       default: true
     },
     from: String,
-    lastMessage: Date
+    lastMessage: Date,
+    subscribed: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true

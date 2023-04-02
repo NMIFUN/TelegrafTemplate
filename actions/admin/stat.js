@@ -45,6 +45,7 @@ module.exports = async (ctx) => {
   const promises = [
     User.countDocuments(),
     User.countDocuments({ alive: true }),
+    User.countDocuments({ alive: true, subscribed: true }),
 
     User.countDocuments({ alive: true, lastMessage: { $gte: today } }),
     User.countDocuments({ alive: true, lastMessage: { $gte: week } }),
@@ -72,6 +73,7 @@ module.exports = async (ctx) => {
   const [
     all,
     alive,
+    subscribed,
     dau,
     wau,
     mau,
@@ -86,6 +88,9 @@ module.exports = async (ctx) => {
 
   const text = `Всего: ${all.format(0)}
 Живых: ${alive.format(0)} (${Math.round((alive / all) * 100)}%)
+Прошедщих ОП: ${subscribed.format(0)} (${Math.round(
+  (subscribed / alive) * 100
+)}%)
 
 DAU: ${dau.format(0)} (${Math.round((dau / wau) * 100)}%)
 WAU: ${wau.format(0)} (${Math.round((wau / mau) * 100)}%)

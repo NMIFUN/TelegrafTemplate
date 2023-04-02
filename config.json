@@ -1,9 +1,13 @@
 {
   "admins": [305544740],
   "subsChannels": [],
+  "subsBots": [],
   "botStat": {
     "send": false,
     "alive": true,
     "key": ""
-  }
+  },
+  "lastTimeoutError": 0,
+  "lastFloodError": 0,
+  "joinChannels": []
 }

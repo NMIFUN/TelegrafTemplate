@@ -26,7 +26,12 @@ module.exports = async () => {
       },
       data: formData
     }
-    await axios(axiosConfig)
+
+    try {
+      await axios(axiosConfig)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   if (config.botStat?.botMan) {
@@ -38,6 +43,11 @@ module.exports = async () => {
       },
       data: formData
     }
-    await axios(axiosConfig)
+
+    try {
+      await axios(axiosConfig)
+    } catch (error) {
+      console.error(error)
+    }
   }
 }
