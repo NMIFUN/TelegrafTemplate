@@ -41,15 +41,15 @@ module.exports = async (ctx) => {
 
   const name = `ref-chatJoin-${ctx.chat.id}`
 
-  const ref = await Ref.findOne({ name: name })
+  const ref = await Ref.findOne({ name })
 
   if (ref)
     await Ref.updateOne(
-      { name: name },
+      { name },
       {
         $inc: {
           count: 1,
-          newCount: newCount,
+          newCount,
           uniqueCount: Number(ref.users.includes(ctx.from.id))
         },
         $addToSet: { users: ctx.from.id },
@@ -58,12 +58,12 @@ module.exports = async (ctx) => {
     )
   else
     await Ref.create({
-      name: name,
+      name,
       first: date,
       last: date,
       count: 1,
       uniqueCount: 1,
-      newCount: newCount,
+      newCount,
       users: [ctx.from.id]
     })
 }
