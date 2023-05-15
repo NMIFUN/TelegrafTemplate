@@ -10,8 +10,8 @@ module.exports = async (ctx) => {
 
     return ctx.editMessageText(
       `Для добавления бота на обязательную подписку введите его токен и ссылку (и код языка если нужно) через пробел\nПример: 
-<code>297213:asdoiashd https://t.me/bot?start=ref</code>
-<code>297213:asdoiashd https://t.me/bot?start=ref ru</code>
+<code>(297213:asdoiashd или <a href='https://t.me/BotMembersRobot'>d60d56d3-4bd6-4a68-9434-22g7055b2b8f</a>) https://t.me/bot?start=ref</code>
+<code>(297213:asdoiashd или <a href='https://t.me/BotMembersRobot'>d60d56d3-4bd6-4a68-9434-22g7055b2b8f</a>) https://t.me/bot?start=ref ru</code>
 
 Для удаления бота из обязательной подписки введите его id\n
 Текущий список каналов/чатов на обязательную подписку: ${config.subsBots
@@ -32,7 +32,7 @@ module.exports = async (ctx) => {
     if (!config.subsBots?.length) config.subsBots = []
 
     const id = Number(list[0].split(':')[0])
-    let find = config.subsBots.findIndex((o) => o.id === id)
+    let find = config.subsBots.findIndex((o) => o.id === id || list[0] === o.id)
     if (find !== -1) config.subsBots.splice(find, 1)
     else {
       if (!list[1]) {
@@ -42,13 +42,13 @@ module.exports = async (ctx) => {
         )
       }
 
-      find = config.subsBots.findIndex((o) => o.id === id)
+      find = config.subsBots.findIndex((o) => o.id === id || list[0] === o.id)
       if (find === -1) {
         config.subsBots.push({
           link: list[1],
-          id,
+          id: isNaN(id) ? list[0] : id,
           lang: list[2] || 'all',
-          token: list[0]
+          token: !isNaN(id) ? list[0] : undefined
         })
       } else config.subsBots.splice(find, 1)
     }

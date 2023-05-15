@@ -5,6 +5,12 @@ const User = require('../models/user')
 const Ref = require('../models/ref')
 
 module.exports = async (ctx) => {
+  console.log(
+    `${new Date().toLocaleString('ru')} @${ctx.botInfo.username} ${
+      ctx.updateType
+    } | ${ctx.from?.id || 'noUserId'} | ${ctx.chat?.id || 'noChatId'}`
+  )
+
   const find = config.joinChannels?.find(
     (channel) => channel.id === ctx.chat.id
   )

@@ -1,11 +1,13 @@
 const config = require('../config')
-const Markup = require('telegraf/markup')
 const asyncFilter = async (arr, predicate) =>
   Promise.all(arr.map(predicate)).then((results) =>
     arr.filter((_v, index) => results[index])
   )
 const start = require('../actions/start')
+
 const { Telegraf } = require('telegraf')
+const axios = require('axios')
+const Markup = require('telegraf/markup')
 
 module.exports = async (ctx, next) => {
   if (config.admins.includes(ctx.from.id) || ctx?.chat?.type !== 'private') {
@@ -33,13 +35,21 @@ module.exports = async (ctx, next) => {
   if (bots?.length) {
     notSubscribed = notSubscribed.concat(
       await asyncFilter(bots, async (bot) => {
-        const connectedBot = new Telegraf(bot.token)
-        const check =
-          (await connectedBot.telegram
-            .sendChatAction(ctx.from.id, 'typing')
-            .catch(() => {})) || false
+        if (bot.token) {
+          const connectedBot = new Telegraf(bot.token)
+          const check =
+            (await connectedBot.telegram
+              .sendChatAction(ctx.from.id, 'typing')
+              .catch(() => {})) || false
 
-        return !check
+          return !check
+        } else {
+          const check = await axios
+            .get(`https://api.botstat.io/checksub/${bot.id}/${ctx.from.id}`)
+            .catch(() => ({ data: { ok: false } }))
+
+          return !check.data.ok
+        }
       })
     )
   }
