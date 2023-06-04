@@ -10,6 +10,4 @@ const router = new Router(async (ctx) => {
 router.on('mail', require('../actions/admin/mail/inline'))
 router.on('view', require('../actions/admin/view/inline'))
 
-// router.otherwise()
-
 module.exports = router

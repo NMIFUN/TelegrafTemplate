@@ -1,6 +1,8 @@
 const View = require('../models/view')
+const config = require('../config.json')
 
 const { randomInt } = require('crypto')
+const axios = require('axios')
 
 module.exports = async (ctx) => {
   let views = await View.find({
@@ -26,7 +28,23 @@ module.exports = async (ctx) => {
     return !(view.unique && view.users.includes(ctx.user.id))
   })
 
-  if (!views.length) return
+  if (!views.length) {
+    if (!config.gramads) return
+
+    const responce = await axios.post(
+      `https://api.gramads.net/ad/SendPost`,
+      {
+        SendToChatId: ctx.user.id
+      },
+      {
+        headers: {
+          Authorization: `bearer ${config.gramads}`,
+          'content-type': 'application/json'
+        }
+      }
+    )
+    if (!responce.data.ok) return
+  }
 
   const view = views[randomInt(0, views.length)]
   delete view.message.chat

@@ -48,7 +48,7 @@ bot.use(require('./middlewares/logging'))
 
 bot.on('text', require('./middlewares/sysRefs'))
 
-bot.on('text', require('./actions/translateBot'))
+// bot.on('text', require('./actions/translateBot'))
 
 bot.on('message', require('./middlewares/subscription'))
 

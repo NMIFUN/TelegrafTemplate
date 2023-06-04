@@ -9,7 +9,7 @@ module.exports = async (ctx) => {
     ctx.user.state = 'admin_addAdmin'
 
     return ctx.editMessageText(
-      `Для добавления/удаления администратора введите его id.
+      `Для добавления/удаления администратора введите его id или перешлите сообщение.
 \nТекущий список администраторов: ${config.admins.join(', ')}`,
       {
         ...admin.backKeyboard,
@@ -17,15 +17,15 @@ module.exports = async (ctx) => {
       }
     )
   } else {
-    const list = ctx.message.text.split(' ')
-    for (let i of list) {
-      i = Number(i.trim())
+    const id = ctx.message.forward_from
+      ? ctx.message.forward_from.id
+      : ctx.message.text
 
-      const find = config.admins.indexOf(i)
+    const find = config.admins.indexOf(id)
 
-      if (find === -1) config.admins.push(i)
-      else config.admins.splice(find, 1)
-    }
+    if (find === -1) config.admins.push(id)
+    else config.admins.splice(find, 1)
+
     await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
 
     return ctx.replyWithHTML(

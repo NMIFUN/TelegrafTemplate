@@ -7,24 +7,26 @@ module.exports = async (ctx) => {
     await ctx.answerCbQuery()
 
     ctx.user.state = 'admin_ban'
+
     return ctx.editMessageText(
-      'Для добавления/удаления в/из бан(а) введите его id.',
+      'Для добавления/удаления в/из бан(а) введите его id или перешлите сообщение.',
       {
         ...admin.backKeyboard,
         parse_mode: 'HTML'
       }
     )
   } else {
-    if (config.admins.includes(Number(ctx.message.text)))
-      return ctx.replyWithHTML('Нельзя забанить админа')
+    const id = ctx.message.forward_from
+      ? ctx.message.forward_from.id
+      : ctx.message.text
 
-    const user = await User.findOne({ id: ctx.message.text })
-    if (!user) {
-      return ctx.reply(
-        `Пользователь с id ${ctx.message.text} не найден.`,
-        admin.backKeyboard
-      )
-    }
+    const user = await User.findOne({ id }).catch(() => {})
+
+    if (!user)
+      return ctx.reply(`Пользователь с id ${id} не найден.`, admin.backKeyboard)
+
+    if (config.admins.includes(user.id))
+      return ctx.replyWithHTML('Нельзя забанить админа')
 
     ctx.user.state = null
 

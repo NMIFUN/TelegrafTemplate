@@ -53,6 +53,7 @@ adminRouter.on('addJoin', require('../actions/admin/addJoin'))
 adminRouter.on('sysRef', require('../actions/admin/sysRef'))
 adminRouter.on('ban', require('../actions/admin/ban'))
 adminRouter.on('botStat', require('../actions/admin/botStat'))
+adminRouter.on('gramads', require('../actions/admin/gramads'))
 
 const adminViewRouter = new Router(async (ctx) => {
   const cmd = ctx.user.state.split('_')

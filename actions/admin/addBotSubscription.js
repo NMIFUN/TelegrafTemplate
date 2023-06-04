@@ -1,72 +1,142 @@
-const config = require('../../config.json')
-const admin = require('../../helpers/admin.js')
+const { Markup } = require('telegraf')
 const fs = require('fs').promises
 
+const config = require('../../config.json')
+
 module.exports = async (ctx) => {
-  if (ctx.callbackQuery) {
-    await ctx.answerCbQuery()
+  if (ctx.callbackQuery) await ctx.answerCbQuery()
 
-    ctx.user.state = 'admin_addBotSubscription'
+  if (!config.subsBots) config.subsBots = []
+  config.subsBots = config.subsBots.filter((e) => e.url)
 
-    return ctx.editMessageText(
-      `Для добавления бота на обязательную подписку введите его токен и ссылку (и код языка если нужно) через пробел\nПример: 
-<code>(297213:asdoiashd или <a href='https://t.me/BotMembersRobot'>d60d56d3-4bd6-4a68-9434-22g7055b2b8f</a>) https://t.me/bot?start=ref</code>
-<code>(297213:asdoiashd или <a href='https://t.me/BotMembersRobot'>d60d56d3-4bd6-4a68-9434-22g7055b2b8f</a>) https://t.me/bot?start=ref ru</code>
+  if (ctx.state[1]) {
+    const code = ctx.message?.text ?? 's'
 
-Для удаления бота из обязательной подписки введите его id\n
-Текущий список каналов/чатов на обязательную подписку: ${config.subsBots
-        ?.map(
-          (e) =>
-            `<a href='${e.link}'>${e.id}</a> ${e.lang} (<code>${e.id}</code>)`
-        )
-        .join(', ')}`,
-      {
-        ...admin.backKeyboard,
-        parse_mode: 'HTML',
-        disable_web_page_preview: true
-      }
-    )
-  } else {
-    const list = ctx.message.text.split(' ')
+    if (code > 3) return ctx.replyWithHTML(`Неверный языковой код`)
 
-    if (!config.subsBots?.length) config.subsBots = []
-
-    const id = Number(list[0].split(':')[0])
-    let find = config.subsBots.findIndex((o) => o.id === id || list[0] === o.id)
-    if (find !== -1) config.subsBots.splice(find, 1)
-    else {
-      if (!list[1]) {
-        return ctx.replyWithHTML(
-          'Не указана ссылка на бот.',
-          admin.backKeyboard
-        )
-      }
-
-      find = config.subsBots.findIndex((o) => o.id === id || list[0] === o.id)
-      if (find === -1) {
-        config.subsBots.push({
-          link: list[1],
-          id: isNaN(id) ? list[0] : id,
-          lang: list[2] || 'all',
-          token: !isNaN(id) ? list[0] : undefined
-        })
-      } else config.subsBots.splice(find, 1)
+    const object = {
+      name: ctx.state[0].split(':')[0],
+      url: ctx.state[0].split(':')[1],
+      lang: code !== 's' ? code : undefined,
+      token: code !== 's' ? ctx.state[1] : undefined
     }
+
+    config.subsBots.push(object)
 
     await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
 
-    return ctx.replyWithHTML(
-      `Список ботов на обязательную подписку обновлен.\n
-Текущий список: ${config.subsBots
-        .map(
-          (e) =>
-            `<a href='${e.link}'>${e.id}</a> ${e.lang} (<code>${e.id}</code>)`
-        )
-        .join(', ')}`,
-      {
-        ...admin.backKeyboard,
-        disable_web_page_preview: true
-      }
+    await ctx[ctx.message ? 'reply' : 'editMessageText'](
+      `<b>${object.name}</b> ${object.url} ${
+        object.token ?? '(token отсутствует)'
+      } ${object.lang ?? '(язык отсутствует)'} добавлен`,
+      { parse_mode: 'HTML', disable_web_page_preview: true }
     )
+
+    ctx.state = ['new']
   }
+
+  if (
+    ctx.state[0] &&
+    ctx.state[0] !== 'new' &&
+    ctx.state[0]?.split(':')[1] !== 'delete'
+  ) {
+    let token
+
+    if (ctx.callbackQuery) token = 's'
+    else {
+      token = ctx.message.text
+    }
+
+    await ctx[ctx.message ? 'reply' : 'editMessageText'](
+      `<b>${ctx.state[0].split(':')[0]}</b> ${ctx.state[0].split(':')[1]} ${
+        token === 's' ? '(token отсутствует)' : token
+      }
+
+Введите языковой код (если нужно)`,
+      Markup.inlineKeyboard([
+        [Markup.callbackButton('Пропустить', `${ctx.user.state}_${token}`)],
+        [Markup.callbackButton('‹ Назад', ctx.user.state)]
+      ]).extra({ parse_mode: 'HTML', disable_web_page_preview: true })
+    )
+
+    return (ctx.user.state = `${ctx.user.state}_${token}`)
+  }
+
+  if (
+    (!ctx.state[0] && ctx.user.state === 'admin_addBotSubscription') ||
+    ctx.state[0]?.split(':')[1] === 'delete'
+  ) {
+    const list = ctx.message?.text?.split(' ') || ctx.state[0]?.split(':')
+
+    const find = config.subsBots.findIndex((e) => e.name === list[0])
+    if (find !== -1) {
+      config.subsBots.splice(find, 1)
+
+      await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
+
+      await ctx.replyWithHTML(`${list[0]} удален`)
+
+      ctx.state = ['new']
+    } else {
+      if (!list[0] || !list[0].length > 7)
+        return ctx.replyWithHTML(`Название не может вмещать больше 7 символов`)
+
+      if (
+        !list[1] ||
+        (!list[1].startsWith('http') && !list[1].startsWith('t.me'))
+      )
+        return ctx.replyWithHTML(
+          `Ссылка должна начинаться с <i>http</i> или <i>t.me</i>!`
+        )
+
+      await ctx.replyWithHTML(
+        `<b>${list[0]}</b> ${list[1]}
+
+Введите token из @botfather или токен из @BotMembersRobot`,
+        Markup.inlineKeyboard([
+          [
+            Markup.callbackButton(
+              'Пропустить',
+              `${ctx.user.state}_${list[0]}:${list[1]}`
+            )
+          ],
+          [Markup.callbackButton('‹ Назад', ctx.user.state)]
+        ]).extra({ disable_web_page_preview: true })
+      )
+
+      return (ctx.user.state = `${ctx.user.state}_${list[0]}:${list[1]}`)
+    }
+  }
+
+  ctx.user.state = 'admin_addBotSubscription'
+
+  if (ctx.state[0] === 'new') await ctx.deleteMessage()
+
+  return ctx[
+    ctx.message || ctx.state[0] === 'new' ? 'reply' : 'editMessageText'
+  ](
+    `${config.subsBots.map(
+      (e) =>
+        `<b>${e.name}</b> ${e.url} ${e.token ?? '(id отсутствует)'} ${
+          e.lang ?? '(язык отсутствует)'
+        }`
+    )}
+
+Для добавления <b>бота</b> на обязательную подписку: 
+<i>Введите название и рекламную ссылку через пробел</i>
+
+Для удаления нажмите на кнопку ниже`,
+    Markup.inlineKeyboard(
+      [
+        ...config.subsBots.map((e) =>
+          Markup.callbackButton(e.name, `${ctx.user.state}_${e.name}:delete`)
+        ),
+        Markup.callbackButton('‹ Назад', 'admin_back')
+      ],
+      { columns: 2 }
+    ).extra({
+      parse_mode: 'HTML',
+      disable_web_page_preview: true
+    })
+  )
 }

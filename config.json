@@ -1,7 +1,22 @@
 {
   "admins": [305544740],
-  "subsChannels": [],
-  "subsBots": [],
+  "subsChannels": [
+    {
+      "name": "WITHID",
+      "url": "t.me/WITHID",
+      "id": -1001382855885
+    },
+    {
+      "name": "WITHOUTID",
+      "url": "t.me/WITHOUTID"
+    }
+  ],
+  "subsBots": [
+    {
+      "name": "BOTWITHOUTID",
+      "url": "t.me/s"
+    }
+  ],
   "botStat": {
     "send": false,
     "alive": true,

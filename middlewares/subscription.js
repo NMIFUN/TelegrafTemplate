@@ -1,3 +1,7 @@
+const { Telegraf } = require('telegraf')
+const axios = require('axios')
+const Markup = require('telegraf/markup')
+
 const config = require('../config')
 const asyncFilter = async (arr, predicate) =>
   Promise.all(arr.map(predicate)).then((results) =>
@@ -5,56 +9,63 @@ const asyncFilter = async (arr, predicate) =>
   )
 const start = require('../actions/start')
 
-const { Telegraf } = require('telegraf')
-const axios = require('axios')
-const Markup = require('telegraf/markup')
-
 module.exports = async (ctx, next) => {
-  if (config.admins.includes(ctx.from.id) || ctx?.chat?.type !== 'private') {
+  if (config.admins.includes(ctx.from.id) || ctx?.chat?.type !== 'private')
     return next()
-  }
+
+  if (!config.subsBots) config.subsBots = []
+  config.subsBots = config.subsBots.filter((e) => e.url)
+  if (!config.subsChannels) config.subsChannels = []
+  config.subsChannels = config.subsChannels.filter((e) => e.url)
 
   let notSubscribed = []
-  const channels = config.subsChannels?.filter((channel) =>
-    [undefined, ctx.user?.lang, 'all'].includes(channel.lang)
+
+  const channels = config.subsChannels.filter((channel) =>
+    [undefined, ctx.user?.lang].includes(channel.lang)
   )
-  if (channels?.length) {
+  if (channels.length)
     notSubscribed = await asyncFilter(channels, async (channel) => {
-      const check =
-        (await ctx.telegram
-          .getChatMember(channel.id, ctx.from.id)
-          .catch(() => {})) || {}
+      const check = channel.id
+        ? (await ctx.telegram
+            .getChatMember(channel.id, ctx.from.id)
+            .catch(() => {})) || {}
+        : { status: 'kicked' }
 
       return ['left', 'kicked'].includes(check.status)
     })
-  }
 
-  const bots = config.subsBots?.filter((channel) =>
-    [undefined, ctx.user?.lang, 'all'].includes(channel.lang)
+  const bots = config.subsBots.filter((channel) =>
+    [undefined, ctx.user?.lang].includes(channel.lang)
   )
-  if (bots?.length) {
+  if (bots.length)
     notSubscribed = notSubscribed.concat(
       await asyncFilter(bots, async (bot) => {
         if (bot.token) {
-          const connectedBot = new Telegraf(bot.token)
-          const check =
-            (await connectedBot.telegram
-              .sendChatAction(ctx.from.id, 'typing')
-              .catch(() => {})) || false
+          if (bot.token.includes(':')) {
+            const connectedBot = new Telegraf(bot.token)
+            const check =
+              (await connectedBot.telegram
+                .sendChatAction(ctx.from.id, 'typing')
+                .catch(() => {})) || false
 
-          return !check
-        } else {
-          const check = await axios
-            .get(`https://api.botstat.io/checksub/${bot.id}/${ctx.from.id}`)
-            .catch(() => ({ data: { ok: false } }))
+            return !check
+          } else {
+            const check = await axios
+              .get(
+                `https://api.botstat.io/checksub/${bot.token}/${ctx.from.id}`
+              )
+              .catch(() => ({ data: { ok: false } }))
 
-          return !check.data.ok
-        }
+            return !check.data.ok
+          }
+        } else return true
       })
     )
-  }
 
-  if (notSubscribed.length) {
+  if (
+    notSubscribed.length &&
+    notSubscribed.filter((channel) => channel.id && channel.token).length
+  ) {
     if (ctx.callbackQuery) {
       await ctx.answerCbQuery(ctx.i18n.t('subscribe.notif'))
     }
@@ -67,14 +78,16 @@ module.exports = async (ctx, next) => {
       parse_mode: 'HTML',
       reply_markup: Markup.inlineKeyboard(
         [
-          ...notSubscribed.map((channel, index) => {
-            return Markup.urlButton(
-              `${ctx.i18n.t(
-                `subscribe.${channel.token ? 'bot' : 'channel'}`
-              )} №${index + 1}`,
-              channel.link
-            )
-          }),
+          ...notSubscribed
+            .sort((channel) => (!channel.id && !channel.token ? -1 : 1))
+            .map((channel, index) => {
+              return Markup.urlButton(
+                `${ctx.i18n.t(
+                  `subscribe.${channel.token ? 'bot' : 'channel'}`
+                )} №${index + 1}`,
+                channel.url
+              )
+            }),
           Markup.callbackButton(
             ctx.i18n.t('subscribe.key.check'),
             'subscription'
