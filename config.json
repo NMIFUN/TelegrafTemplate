@@ -1,16 +1,8 @@
 {
-  "admins": [305544740],
-  "subsChannels": [
-    {
-      "name": "WITHID",
-      "url": "t.me/WITHID",
-      "id": -1001382855885
-    },
-    {
-      "name": "WITHOUTID",
-      "url": "t.me/WITHOUTID"
-    }
+  "admins": [
+    305544740
   ],
+  "subsChannels": [],
   "subsBots": [
     {
       "name": "BOTWITHOUTID",
@@ -22,7 +14,7 @@
     "alive": true,
     "key": ""
   },
-  "lastTimeoutError": 0,
+  "lastTimeoutError": 1685883472966,
   "lastFloodError": 0,
   "joinChannels": []
 }

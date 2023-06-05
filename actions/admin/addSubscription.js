@@ -10,14 +10,15 @@ module.exports = async (ctx) => {
   config.subsChannels = config.subsChannels.filter((e) => e.url)
 
   if (ctx.state[1]) {
-    const code = ctx.message?.text ?? 's'
+    const code = ctx.message?.text ? ctx.message.text.trim() : 's'
 
-    if (code > 3) return ctx.replyWithHTML(`Неверный языковой код`)
+    if (code.length > 3) return ctx.replyWithHTML(`Неверный языковой код`)
 
     const object = {
       name: ctx.state[0].split(':')[0],
-      url: ctx.state[0].split(':')[1],
-      lang: code !== 's' ? code : undefined
+      url: ctx.state[0].split(':')[1].replaceAll('!!', '_'),
+      lang: code !== 's' ? code : undefined,
+      type: 'channel'
     }
 
     if (ctx.state[1] !== 's') {
@@ -80,10 +81,12 @@ module.exports = async (ctx) => {
   }
 
   if (
-    (!ctx.state[0] && ctx.user.state === 'admin_addSubscription') ||
+    (!ctx.state[0] && ctx.user.state === 'admin_aS') ||
     ctx.state[0]?.split(':')[1] === 'delete'
   ) {
     const list = ctx.message?.text?.split(' ') || ctx.state[0]?.split(':')
+    list[0] = list[0].trim()
+    list[1] = list[1].trim()
 
     const find = config.subsChannels.findIndex((e) => e.name === list[0])
     if (find !== -1) {
@@ -98,13 +101,8 @@ module.exports = async (ctx) => {
       if (!list[0] || !list[0].length > 7)
         return ctx.replyWithHTML(`Название не может вмещать больше 7 символов`)
 
-      if (
-        !list[1] ||
-        (!list[1].startsWith('http') && !list[1].startsWith('t.me'))
-      )
-        return ctx.replyWithHTML(
-          `Ссылка должна начинаться с <i>http</i> или <i>t.me</i>!`
-        )
+      if (!list[1] || !list[1].startsWith('t.me'))
+        return ctx.replyWithHTML(`Ссылка должна начинаться с <i>t.me</i>!`)
 
       await ctx.replyWithHTML(
         `<b>${list[0]}</b> ${list[1]}
@@ -121,23 +119,27 @@ module.exports = async (ctx) => {
         ]).extra({ disable_web_page_preview: true })
       )
 
-      return (ctx.user.state = `${ctx.user.state}_${list[0]}:${list[1]}`)
+      return (ctx.user.state = `${ctx.user.state}_${
+        list[0]
+      }:${list[1].replaceAll('_', '!!')}`)
     }
   }
 
-  ctx.user.state = 'admin_addSubscription'
+  ctx.user.state = 'admin_aS'
 
   if (ctx.state[0] === 'new') await ctx.deleteMessage()
 
   return ctx[
     ctx.message || ctx.state[0] === 'new' ? 'reply' : 'editMessageText'
   ](
-    `${config.subsChannels.map(
-      (e) =>
-        `<b>${e.name}</b> ${e.url} ${e.id ?? '(id отсутствует)'} ${
-          e.lang ?? '(язык отсутствует)'
-        }`
-    )}
+    `${config.subsChannels
+      .map(
+        (e) =>
+          `<b>${e.name}</b> ${e.url} ${e.id ?? '(id отсутствует)'} ${
+            e.lang ?? '(язык отсутствует)'
+          }`
+      )
+      .join('\n')}
 
 Для добавления <b>канала/группы</b> на обязательную подписку: 
 <i>Введите название и рекламную ссылку через пробел</i>

@@ -26,11 +26,8 @@ const adminRouter = new Router(async (ctx) => {
 })
 
 adminRouter.on('addAdmin', require('../actions/admin/addAdmin'))
-adminRouter.on('addSubscription', require('../actions/admin/addSubscription'))
-adminRouter.on(
-  'addBotSubscription',
-  require('../actions/admin/addBotSubscription')
-)
+adminRouter.on('aS', require('../actions/admin/addSubscription'))
+adminRouter.on('aBS', require('../actions/admin/addBotSubscription'))
 adminRouter.on('addJoin', require('../actions/admin/addJoin'))
 adminRouter.on('listUsers', require('../actions/admin/listUsers'))
 adminRouter.on('sysRef', require('../actions/admin/sysRef'))
