@@ -84,9 +84,9 @@ module.exports = async (ctx) => {
     (!ctx.state[0] && ctx.user.state === 'admin_aS') ||
     ctx.state[0]?.split(':')[1] === 'delete'
   ) {
-    const list = ctx.message?.text?.split(' ') || ctx.state[0]?.split(':')
-    list[0] = list[0].trim()
-    list[1] = list[1].trim()
+    const list = (
+      ctx.message?.text?.split(' ') || ctx.state[0]?.split(':')
+    ).map((e) => e?.trim())
 
     const find = config.subsChannels.findIndex((e) => e.name === list[0])
     if (find !== -1) {
@@ -98,7 +98,7 @@ module.exports = async (ctx) => {
 
       ctx.state = ['new']
     } else {
-      if (!list[0] || !list[0].length > 7)
+      if (!list[0] || list[0].length > 7)
         return ctx.replyWithHTML(`Название не может вмещать больше 7 символов`)
 
       if (!list[1] || !list[1].startsWith('t.me'))

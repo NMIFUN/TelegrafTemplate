@@ -13,11 +13,9 @@ module.exports = async (ctx) => {
     (!ctx.state[0] && ctx.user.state === 'admin_aBS') ||
     ctx.state[1] === 'delete'
   ) {
-    const list = ctx.message?.text?.split(' ') || [ctx.state[0], ctx.state[1]]
-    list[0] = list[0].trim()
-    list[1] = list[1].trim()
-    list[2] = list[2].trim()
-    list[3] = list[3].trim()
+    const list = (
+      ctx.message?.text?.split(' ') || [ctx.state[0], ctx.state[1]]
+    ).map((e) => e?.trim())
 
     const find = config.subsBots.findIndex((e) => e.name === list[0])
     if (find !== -1) {
@@ -27,7 +25,7 @@ module.exports = async (ctx) => {
 
       await ctx.replyWithHTML(`${list[0]} удален`)
     } else {
-      if (!list[0] || !list[0].length > 7)
+      if (!list[0] || list[0].length > 7)
         return ctx.replyWithHTML(`Название не может вмещать больше 7 символов`)
 
       if (!list[1] || !list[1].startsWith('t.me'))

@@ -62,10 +62,7 @@ module.exports = async (ctx, next) => {
       })
     )
 
-  if (
-    notSubscribed.length &&
-    notSubscribed.filter((channel) => channel.id && channel.token).length
-  ) {
+  if (notSubscribed.filter((channel) => channel.id || channel.token).length) {
     if (ctx.callbackQuery) {
       await ctx.answerCbQuery(ctx.i18n.t('subscribe.notif'))
     }
