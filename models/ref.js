@@ -5,7 +5,6 @@ let Ref = mongoose.Schema({
   first: Date,
   last: Date,
   count: Number,
-  uniqueCount: Number,
   newCount: Number,
   users: Array,
   price: Number

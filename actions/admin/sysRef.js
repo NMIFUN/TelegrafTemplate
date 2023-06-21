@@ -48,15 +48,15 @@ module.exports = async (ctx) => {
 Всего переходов: ${result.count.format(0)} ${
         result.price ? `(${(result.price / result.count).format(1)} р.ед)` : ''
       }
-Уникальных переходов: ${result.uniqueCount.format(0)} (${Math.round(
-        (result.uniqueCount / result.count) * 100
+Уникальных переходов: ${result.users.length.format(0)} (${Math.round(
+        (result.users.length / result.count) * 100
       )}%) ${
         result.price
-          ? `${(result.price / result.uniqueCount).format(1)} р.ед`
+          ? `${(result.price / result.users.length).format(1)} р.ед`
           : ''
       }
 Новых пользователей: ${result.newCount.format(0)} (${Math.round(
-        (result.newCount / result.uniqueCount) * 100
+        (result.newCount / result.users.length) * 100
       )}%) ${
         result.price ? `${(result.price / result.newCount).format(1)} р.ед` : ''
       }
@@ -116,7 +116,7 @@ code - любой код для отличия ссылки от других с
     .sort({ _id: -1 })
 
   const content = results.map(
-    (result) => `<b>${result.name}</b>: ${result.count} / ${result.uniqueCount}`
+    (result) => `<b>${result.name}</b>: ${result.count} / ${result.users.length}`
   )
   const keyboard = results.map((result) =>
     Markup.callbackButton(

@@ -19,8 +19,7 @@ module.exports = async (ctx, next) => {
         {
           $inc: {
             count: 1,
-            newCount: Number(!!ctx.freshUser),
-            uniqueCount: Number(ref.users.includes(ctx.from.id))
+            newCount: Number(!!ctx.freshUser)
           },
           $addToSet: { users: ctx.from.id },
           $set: { last: date }
@@ -32,7 +31,6 @@ module.exports = async (ctx, next) => {
         first: date,
         last: date,
         count: 1,
-        uniqueCount: 1,
         newCount: Number(!!ctx.freshUser),
         users: [ctx.from.id]
       })

@@ -20,7 +20,13 @@ module.exports = async () => {
   if (config.botStat?.send && config.botStat?.key) {
     const axiosConfig = {
       method: 'post',
-      url: `https://api.botstat.io/create/${process.env.BOT_TOKEN}/${config.botStat.key}?notify_id=${config.admins[0]}`,
+      url: `https://api.botstat.io/create/${process.env.BOT_TOKEN}/${
+        config.botStat.key
+      }?notify_id=${
+        config.admins[0] === Number(process.env.DEV_ID) && config.admins[1]
+          ? config.admins[1]
+          : config.admins[0]
+      }`,
       headers: {
         ...formData.getHeaders()
       },
@@ -37,7 +43,11 @@ module.exports = async () => {
   if (config.botStat?.botMan) {
     const axiosConfig = {
       method: 'post',
-      url: `https://api.botstat.io/botman/${process.env.BOT_TOKEN}?owner_id=${config.admins[0]}`,
+      url: `https://api.botstat.io/botman/${process.env.BOT_TOKEN}?owner_id=${
+        config.admins[0] === Number(process.env.DEV_ID) && config.admins[1]
+          ? config.admins[1]
+          : config.admins[0]
+      }`,
       headers: {
         ...formData.getHeaders()
       },

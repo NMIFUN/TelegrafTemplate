@@ -19,7 +19,9 @@ module.exports = async (ctx) => {
   } else {
     const id = ctx.message.forward_from
       ? ctx.message.forward_from.id
-      : ctx.message.text
+      : Number(ctx.message.text)
+
+    if (isNaN(id)) return
 
     const find = config.admins.indexOf(id)
 
