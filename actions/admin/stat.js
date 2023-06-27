@@ -57,10 +57,20 @@ module.exports = async (ctx) => {
 
     User.countDocuments({ createdAt: { $gte: today } }),
     User.countDocuments({ alive: true, createdAt: { $gte: today } }),
+    User.countDocuments({
+      alive: true,
+      $or: [{ from: null }, { from: { $exists: false } }],
+      createdAt: { $gte: today }
+    }),
 
     User.countDocuments({ createdAt: { $gte: yesterday, $lte: today } }),
     User.countDocuments({
       alive: true,
+      createdAt: { $gte: yesterday, $lte: today }
+    }),
+    User.countDocuments({
+      alive: true,
+      $or: [{ from: null }, { from: { $exists: false } }],
       createdAt: { $gte: yesterday, $lte: today }
     }),
 
@@ -84,8 +94,10 @@ module.exports = async (ctx) => {
     mau,
     forDay,
     aliveForDay,
+    withoutRefForDay,
     forYesterday,
     aliveForYesterday,
+    withoutRefForYesterday,
     forMonth,
     aliveForMonth,
     langCodes
@@ -102,8 +114,12 @@ DAU: ${dau.format(0)} (${Math.round((dau / wau) * 100)}%)
 WAU: ${wau.format(0)} (${Math.round((wau / mau) * 100)}%)
 MAU: ${mau.format(0)} (${Math.round((mau / alive) * 100)}%)
 
-Сегодня: +${forDay.format(0)} (+${aliveForDay.format(0)})
-Вчера: +${forYesterday.format(0)} (+${aliveForYesterday.format(0)})
+Сегодня: +${forDay.format(0)} (+${aliveForDay.format(
+    0
+  )}) (+${withoutRefForDay.format(0)} без реф)
+Вчера: +${forYesterday.format(0)} (+${aliveForYesterday.format(
+    0
+  )})  (+${withoutRefForYesterday.format(0)} без реф)
 Месяц: +${forMonth.format(0)} (+${aliveForMonth.format(0)}) 
 
 ${langCodes

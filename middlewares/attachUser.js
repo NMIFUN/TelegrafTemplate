@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const convertChars = require('../helpers/convertChars')
+const saveModifier = require('../helpers/saveModifier')
 
 module.exports = async (ctx, next) => {
   let user = await User.findOne({ id: ctx.from.id })
@@ -14,12 +15,14 @@ module.exports = async (ctx, next) => {
       from: ctx?.message?.text?.split(' ')[1] || null,
       lastMessage: Date.now()
     })
-    await user.save()
+
+    await saveModifier(user)
+
     ctx.freshUser = true
   }
   ctx.user = user
 
   await next()
 
-  return ctx.user?.save()
+  return saveModifier(ctx.user)
 }
