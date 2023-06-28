@@ -8,7 +8,8 @@ module.exports = async (ctx) => {
   if (ctx.message?.text) {
     ctx.user.state = null
 
-    config.gramads = ctx.message.text
+    if (ctx.message.text === 0) config.gramads = undefined
+    else config.gramads = ctx.message.text
 
     await fs.writeFile('config.json', JSON.stringify(config, null, '  '))
   }

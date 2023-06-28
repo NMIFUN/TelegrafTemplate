@@ -31,18 +31,20 @@ module.exports = async (ctx) => {
   if (!views.length) {
     if (!config.gramads) return
 
-    const responce = await axios.post(
-      `https://api.gramads.net/ad/SendPost`,
-      {
-        SendToChatId: ctx.user.id
-      },
-      {
-        headers: {
-          Authorization: `bearer ${config.gramads}`,
-          'content-type': 'application/json'
+    const responce = await axios
+      .post(
+        `https://api.gramads.net/ad/SendPost`,
+        {
+          SendToChatId: ctx.user.id
+        },
+        {
+          headers: {
+            Authorization: `bearer ${config.gramads}`,
+            'content-type': 'application/json'
+          }
         }
-      }
-    )
+      )
+      .catch(() => {})
     if (!responce.data.ok) return
   }
 

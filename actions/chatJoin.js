@@ -19,7 +19,9 @@ module.exports = async (ctx) => {
   let newCount = 1
 
   try {
-    await ctx.telegram.approveChatJoinRequest(ctx.chat.id, ctx.from.id)
+    await ctx.telegram
+      .approveChatJoinRequest(ctx.chat.id, ctx.from.id)
+      .catch(() => {})
 
     await ctx.telegram.sendMessage(
       ctx.from.id,
@@ -40,7 +42,7 @@ module.exports = async (ctx) => {
     })
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error(err)
+    return console.error(err)
   }
 
   const date = Date.now()
@@ -55,7 +57,7 @@ module.exports = async (ctx) => {
       {
         $inc: {
           count: 1,
-          newCount,
+          newCount
         },
         $addToSet: { users: ctx.from.id },
         $set: { last: date }

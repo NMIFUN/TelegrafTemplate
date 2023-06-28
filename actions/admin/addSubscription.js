@@ -112,7 +112,7 @@ module.exports = async (ctx) => {
           [
             Markup.callbackButton(
               'Пропустить',
-              `${ctx.user.state}_${list[0]}:${list[1]}`
+              `${ctx.user.state}_${list[0]}:${list[1].replaceAll('_', '!!')}`
             )
           ],
           [Markup.callbackButton('‹ Назад', ctx.user.state)]
