@@ -24,7 +24,7 @@
     "axios": "^1.4.0",
     "dotenv": "^16.3.1",
     "js-yaml": "^4.1.0",
-    "mongoose": "^7.3.1",
+    "mongoose": "^7.3.3",
     "node-schedule": "^2.1.1",
     "telegraf": "github:NMIFUN/telegraf",
     "telegraf-i18n": "^6.6.0",
