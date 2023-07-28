@@ -5,10 +5,12 @@ module.exports = function substrHTML(string, length) {
   let lasti = 0
   let result = ''
 
-  while ((m = r.exec(string)) && length) {
-    const temp = string.substring(lasti, m.index).substr(0, length)
+  const unicodeArray = Array.from(string)
+
+  while ((m = r.exec(unicodeArray.join(''))) && length) {
+    const temp = unicodeArray.slice(lasti, m.index).join('').substr(0, length)
     result += temp
-    length -= temp.length
+    length -= Array.from(temp).length
     lasti = r.lastIndex
 
     if (length) {
@@ -18,7 +20,7 @@ module.exports = function substrHTML(string, length) {
     }
   }
 
-  result += string.substr(lasti, length)
+  result += unicodeArray.slice(lasti, length).join('')
 
   while (stack.length) {
     result += '</' + stack.pop() + '>'

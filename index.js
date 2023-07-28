@@ -24,7 +24,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN, { handlerTimeout: 1 })
 
 bot.catch(require('./actions/error'))
 
-const I18n = require('telegraf-i18n')
+const { I18n } = require('telegraf-i18n')
 const i18n = new I18n({
   directory: 'locales',
   defaultLanguage: 'ru',

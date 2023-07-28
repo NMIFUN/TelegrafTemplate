@@ -36,11 +36,17 @@ module.exports = async (ctx) => {
     }
 
     const [result, alive, subscribed] = await Promise.all([
-      Ref.findOne({ name: ctx.state[0] }),
+      Ref.findOne({ name: ctx.state[0].replaceAll('!!', '_') }),
 
-      User.countDocuments({ from: `ref-${ctx.state[0]}`, alive: true }),
+      User.countDocuments({
+        from: `ref-${ctx.state[0].replaceAll('!!', '_')}`,
+        alive: true
+      }),
 
-      User.countDocuments({ from: `ref-${ctx.state[0]}`, subscribed: true })
+      User.countDocuments({
+        from: `ref-${ctx.state[0].replaceAll('!!', '_')}`,
+        subscribed: true
+      })
     ])
 
     return ctx[ctx.message ? 'reply' : 'editMessageText'](
@@ -116,12 +122,13 @@ code - любой код для отличия ссылки от других с
     .sort({ _id: -1 })
 
   const content = results.map(
-    (result) => `<b>${result.name}</b>: ${result.count} / ${result.users.length}`
+    (result) =>
+      `<b>${result.name}</b>: ${result.count} / ${result.users.length}`
   )
   const keyboard = results.map((result) =>
     Markup.callbackButton(
       `${result.name} ${result.count}`,
-      `admin_sysRef_${result.name}`
+      `admin_sysRef_${result.name.replaceAll('_', '!!')}`
     )
   )
 
